@@ -12,17 +12,22 @@ Inspired by the Adopt a Book app (adoptabook.app).
 - 📱 Fully responsive — mobile, tablet, desktop
 
 ## Tech Stack
-- React (Vite)
-- Tailwind CSS
+- React (Create React App)
+- Tailwind CSS (CDN)
 - Lucide React (icons)
 - React Router DOM
 
 ## Getting Started
 
-git clone https://github.com/yourusername/booknest-react.git
+git clone https://github.com/ManujaKM/booknest-react.git
 cd booknest-react
 npm install
-npm run dev
+npm start
+
+## Scripts
+- `npm start` Run the app in development mode.
+- `npm test` Run tests in watch mode.
+- `npm run build` Build for production.
 
 ## Status
 🚧 Work in progress — built for learning purposes.
@@ -30,4 +35,3 @@ npm run dev
 ## Credits
 UI inspired by adoptabook.app
 Built by Manuja Munasinghe
-
