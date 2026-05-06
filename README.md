@@ -29,4 +29,5 @@ npm run dev
 
 ## Credits
 UI inspired by adoptabook.app
-Built by [Your Name]
+Built by Manuja Munasinghe
+
