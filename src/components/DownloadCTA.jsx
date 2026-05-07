@@ -1,6 +1,18 @@
 import { Apple, Smartphone } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const DownloadCTA = () => {
+  const [isHighlighted, setIsHighlighted] = useState(false);
+
+  useEffect(() => {
+    const handleHighlight = () => {
+      setIsHighlighted(true);
+      setTimeout(() => setIsHighlighted(false), 2000);
+    };
+    window.addEventListener('highlight-download', handleHighlight);
+    return () => window.removeEventListener('highlight-download', handleHighlight);
+  }, []);
+
   return (
     <section id="download" className="py-20 bg-[#0d0d1a]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -11,10 +23,18 @@ const DownloadCTA = () => {
           <span className="text-purple-400">revolutionary</span> book sharing platform.
         </h2>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <button className="inline-flex items-center gap-2 rounded-2xl bg-white text-black font-semibold px-6 py-3 transition hover:bg-gray-100">
+          <button
+            className={`inline-flex items-center gap-2 rounded-2xl bg-white text-black font-semibold px-6 py-3 transition hover:bg-gray-100 ${
+              isHighlighted ? 'download-pulse' : ''
+            }`}
+          >
             <Apple size={18} /> App Store
           </button>
-          <button className="inline-flex items-center gap-2 rounded-2xl border-2 border-white text-white px-6 py-3 transition hover:bg-white/10">
+          <button
+            className={`inline-flex items-center gap-2 rounded-2xl border-2 border-white text-white px-6 py-3 transition hover:bg-white/10 ${
+              isHighlighted ? 'download-pulse' : ''
+            }`}
+          >
             <Smartphone size={18} /> Google Play
           </button>
         </div>

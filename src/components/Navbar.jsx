@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BookOpen, Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const navLinks = [
   { label: 'Features', to: '#features' },
@@ -9,13 +10,62 @@ const navLinks = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 12);
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 12);
+      const features = document.getElementById('features');
+      if (features) {
+        const rect = features.getBoundingClientRect();
+        const inView = rect.top <= 120 && rect.bottom >= 120;
+        setActiveSection(inView ? 'features' : null);
+      }
+    };
     onScroll();
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const isLoggedIn = () => localStorage.getItem('bn_user') !== null;
+
+  const getUserRole = () => {
+    const user = JSON.parse(localStorage.getItem('bn_user') || '{}');
+    return user.role || null;
+  };
+
+  const handleNavClick = (event, targetId) => {
+    event.preventDefault();
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      if (targetId === 'download') {
+        window.dispatchEvent(new CustomEvent('highlight-download'));
+      }
+      return;
+    }
+
+    navigate('/');
+    setTimeout(() => {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
+      if (targetId === 'download') {
+        window.dispatchEvent(new CustomEvent('highlight-download'));
+      }
+    }, 300);
+  };
+
+  const handleAuthClick = () => {
+    if (isLoggedIn()) {
+      const role = getUserRole();
+      if (role) {
+        navigate(`/${role}/dashboard`);
+      }
+      return;
+    }
+    document.body.classList.add('page-fade-out');
+    setTimeout(() => navigate('/login'), 200);
+  };
 
   return (
     <header
@@ -35,14 +85,23 @@ const Navbar = () => {
             <a
               key={link.to}
               href={link.to}
-              className="transition hover:text-purple-300"
+              onClick={(event) => handleNavClick(event, link.to.replace('#', ''))}
+              className={`transition hover:text-purple-300 ${
+                link.label === 'Features' && activeSection === 'features'
+                  ? 'border-b-2 border-purple-400 text-white'
+                  : ''
+              }`}
             >
               {link.label}
             </a>
           ))}
-          <a href="/login" className="transition hover:text-purple-300">
-            Login
-          </a>
+          <button
+            type="button"
+            className="transition hover:text-purple-300"
+            onClick={handleAuthClick}
+          >
+            {isLoggedIn() ? 'Dashboard' : 'Login'}
+          </button>
         </nav>
 
         <button
@@ -79,18 +138,24 @@ const Navbar = () => {
                 key={link.to}
                 href={link.to}
                 className="transition hover:text-purple-300"
-                onClick={() => setIsOpen(false)}
+                onClick={(event) => {
+                  handleNavClick(event, link.to.replace('#', ''));
+                  setIsOpen(false);
+                }}
               >
                 {link.label}
               </a>
             ))}
-            <a
-              href="/login"
+            <button
+              type="button"
               className="transition hover:text-purple-300"
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                handleAuthClick();
+                setIsOpen(false);
+              }}
             >
-              Login
-            </a>
+              {isLoggedIn() ? 'Dashboard' : 'Login'}
+            </button>
           </nav>
         </div>
       )}

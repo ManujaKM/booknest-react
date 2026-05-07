@@ -144,7 +144,15 @@ const LoginForm = () => {
         delivery: '/delivery/dashboard'
       };
 
-      console.log(`Redirect to: ${redirectMap[selectedRole]}`);
+      localStorage.setItem(
+        'bn_user',
+        JSON.stringify({
+          email,
+          role: selectedRole,
+          name: 'Riley'
+        })
+      );
+      navigate(redirectMap[selectedRole]);
     }, 2000);
   };
 
