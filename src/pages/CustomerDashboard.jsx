@@ -7,6 +7,7 @@ import MyBooksView from '../components/customer/MyBooksView.jsx';
 import SearchBooksView from '../components/customer/SearchBooksView.jsx';
 import WishlistView from '../components/customer/WishlistView.jsx';
 import ProfileView from '../components/customer/ProfileView.jsx';
+import CommunityView from '../components/customer/community/CommunityView.jsx';
 import {
   BookOpen,
   Heart,
@@ -188,18 +189,7 @@ const CustomerDashboard = () => {
             onRemove={toggleWishlist}
           />
         )}
-        {activeSection === 'community' && (
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center text-gray-300 backdrop-blur">
-            <h2 className="text-2xl font-bold text-white">Community 👥</h2>
-            <p className="mt-3 text-sm text-gray-400">Connect with readers and share your favorite books.</p>
-            <button
-              type="button"
-              className="mt-5 rounded-xl bg-purple-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-purple-500"
-            >
-              Explore Community
-            </button>
-          </div>
-        )}
+        {activeSection === 'community' && <CommunityView user={user} />}
         {activeSection === 'profile' && <ProfileView user={user} />}
       </main>
 
