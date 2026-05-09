@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import CustomerDashboard from './pages/CustomerDashboard.jsx';
+import AdminDashboard from './pages/AdminDashboard.jsx';
+import DeliveryDashboard from './pages/DeliveryDashboard.jsx';
 
 const App = () => {
   const location = useLocation();
