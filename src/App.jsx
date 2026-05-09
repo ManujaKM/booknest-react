@@ -2,12 +2,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
-
-const CustomerDashboard = () => (
-  <div className="min-h-screen bg-[#0d0d1a] text-white flex items-center justify-center text-2xl">
-    Customer Dashboard — Coming Soon 🚧
-  </div>
-);
+import CustomerDashboard from './pages/CustomerDashboard.jsx';
 
 const AdminDashboard = () => (
   <div className="min-h-screen bg-[#0d0d1a] text-white flex items-center justify-center text-2xl">
