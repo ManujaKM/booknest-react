@@ -12,7 +12,7 @@ const statusLabels = {
   wishlist: '❤️ Wishlist'
 };
 
-const BookCard = ({ book }) => {
+const BookCard = ({ book, onRead }) => {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
       <div className={`h-40 w-full rounded-xl ${book.cover}`} />
@@ -33,14 +33,20 @@ const BookCard = ({ book }) => {
         </div>
       )}
       <div className="mt-4 flex items-center gap-2">
+        {book.status !== 'wishlist' && (
+          <button 
+            type="button" 
+            onClick={() => onRead && onRead(book)}
+            className="flex-1 rounded-lg bg-purple-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-purple-500"
+          >
+            Read Now
+          </button>
+        )}
         <button type="button" className="rounded-lg bg-white/5 p-2 text-gray-300 transition hover:bg-white/10">
           <Pencil size={16} />
         </button>
         <button type="button" className="rounded-lg bg-white/5 p-2 text-red-400 transition hover:bg-white/10">
           <Trash2 size={16} />
-        </button>
-        <button type="button" className="rounded-lg bg-white/5 p-2 text-gray-300 transition hover:bg-white/10">
-          <Share2 size={16} />
         </button>
       </div>
     </div>
