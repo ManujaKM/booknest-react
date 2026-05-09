@@ -3,18 +3,8 @@ import { useEffect } from 'react';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import CustomerDashboard from './pages/CustomerDashboard.jsx';
-
-const AdminDashboard = () => (
-  <div className="min-h-screen bg-[#0d0d1a] text-white flex items-center justify-center text-2xl">
-    Admin Dashboard — Coming Soon 🚧
-  </div>
-);
-
-const DeliveryDashboard = () => (
-  <div className="min-h-screen bg-[#0d0d1a] text-white flex items-center justify-center text-2xl">
-    Delivery Dashboard — Coming Soon 🚧
-  </div>
-);
+import AdminDashboard from './pages/AdminDashboard.jsx';
+import DeliveryDashboard from './pages/DeliveryDashboard.jsx';
 
 const App = () => {
   const location = useLocation();
