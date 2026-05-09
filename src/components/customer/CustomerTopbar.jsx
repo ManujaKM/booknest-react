@@ -1,9 +1,28 @@
-import { Bell, Grid, Search } from 'lucide-react';
+import { Bell, Grid, Search, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
-const notificationsList = [
-  '📚 New book recommendation',
-  '✅ Your request was accepted',
-  '👤 Riley started following you'
+const baseNotifications = [
+  {
+    id: 1,
+    color: 'bg-purple-500/70',
+    title: '📚 New book recommendation',
+    time: '2 min ago',
+    unread: true
+  },
+  {
+    id: 2,
+    color: 'bg-emerald-500/70',
+    title: '✅ Your request was accepted',
+    time: '1 hour ago',
+    unread: true
+  },
+  {
+    id: 3,
+    color: 'bg-blue-500/70',
+    title: '👤 Riley started following you',
+    time: '3 hours ago',
+    unread: false
+  }
 ];
 
 const CustomerTopbar = ({
@@ -15,9 +34,59 @@ const CustomerTopbar = ({
   onToggleAvatar,
   onSearchChange,
   searchQuery,
-  onSignOut
+  onSignOut,
+  onNavigate,
+  onOpenSettings,
+  onMarkNotificationsRead
 }) => {
   const initial = user?.name?.charAt(0)?.toUpperCase() || 'R';
+  const [notificationItems, setNotificationItems] = useState(baseNotifications);
+  const notifRef = useRef(null);
+  const avatarRef = useRef(null);
+  const searchInputRef = useRef(null);
+  const latestQueryRef = useRef(searchQuery);
+
+  useEffect(() => {
+    latestQueryRef.current = searchQuery;
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (showNotifDropdown && notifRef.current && !notifRef.current.contains(event.target)) {
+        onToggleNotifications?.();
+      }
+      if (showAvatarDropdown && avatarRef.current && !avatarRef.current.contains(event.target)) {
+        onToggleAvatar?.();
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showNotifDropdown, showAvatarDropdown, onToggleNotifications, onToggleAvatar]);
+
+  useEffect(() => {
+    const handleKeydown = (event) => {
+      if (event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+      const active = document.activeElement;
+      const isEditable =
+        active?.tagName === 'INPUT' || active?.tagName === 'TEXTAREA' || active?.isContentEditable;
+      if (isEditable) {
+        return;
+      }
+      if (event.key.length === 1 && searchInputRef.current) {
+        searchInputRef.current.focus();
+        onSearchChange?.(`${latestQueryRef.current}${event.key}`);
+      }
+    };
+    document.addEventListener('keydown', handleKeydown);
+    return () => document.removeEventListener('keydown', handleKeydown);
+  }, [onSearchChange]);
+
+  const handleMarkAllRead = () => {
+    setNotificationItems((prev) => prev.map((item) => ({ ...item, unread: false })));
+    onMarkNotificationsRead?.();
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 border-b border-white/10 bg-black/30 backdrop-blur">
@@ -35,12 +104,27 @@ const CustomerTopbar = ({
             type="text"
             value={searchQuery}
             onChange={(event) => onSearchChange(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                onNavigate?.('search');
+              }
+            }}
             placeholder="Search books, authors..."
+            ref={searchInputRef}
             className="w-full bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => onSearchChange('')}
+              className="text-gray-400"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
 
-        <div className="relative flex items-center gap-3">
+        <div className="relative flex items-center gap-3" ref={notifRef}>
           <button
             type="button"
             onClick={onToggleNotifications}
@@ -55,15 +139,35 @@ const CustomerTopbar = ({
           </button>
 
           {showNotifDropdown && (
-            <div className="absolute right-14 top-14 w-64 rounded-2xl border border-white/10 bg-[#101025]/90 p-3 text-sm text-gray-200 shadow-lg backdrop-blur">
-              <p className="mb-2 text-xs uppercase tracking-widest text-gray-500">Notifications</p>
+            <div className="absolute right-0 top-14 w-80 rounded-2xl border border-white/10 bg-[#1a1035] p-4 text-sm text-gray-200 shadow-2xl backdrop-blur">
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-xs uppercase tracking-widest text-gray-500">Notifications</p>
+                <button
+                  type="button"
+                  onClick={handleMarkAllRead}
+                  className="text-xs text-purple-300 hover:text-purple-200"
+                >
+                  Mark all read
+                </button>
+              </div>
               <div className="space-y-2">
-                {notificationsList.map((item) => (
-                  <div key={item} className="rounded-lg bg-white/5 px-3 py-2">
-                    {item}
+                {notificationItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-start gap-3 rounded-xl p-3 transition hover:bg-white/5"
+                  >
+                    <span className={`mt-1 h-9 w-9 rounded-full ${item.color}`} />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-white">{item.title}</p>
+                      <p className="text-xs text-gray-500">{item.time}</p>
+                    </div>
+                    {item.unread && <span className="mt-2 h-2 w-2 rounded-full bg-purple-400" />}
                   </div>
                 ))}
               </div>
+              <button type="button" className="mt-3 text-sm text-purple-300 hover:text-purple-200">
+                View all notifications →
+              </button>
             </div>
           )}
 
@@ -74,7 +178,7 @@ const CustomerTopbar = ({
             <Grid size={18} />
           </button>
 
-          <div className="relative">
+          <div className="relative" ref={avatarRef}>
             <button
               type="button"
               onClick={onToggleAvatar}
@@ -83,13 +187,34 @@ const CustomerTopbar = ({
               {initial}
             </button>
             {showAvatarDropdown && (
-              <div className="absolute right-0 top-12 w-44 rounded-2xl border border-white/10 bg-[#101025]/90 p-2 text-sm text-gray-200 shadow-lg backdrop-blur">
-                <button type="button" className="w-full rounded-lg px-3 py-2 text-left hover:bg-white/5">
+              <div className="absolute right-0 top-12 w-48 rounded-2xl border border-white/10 bg-[#1a1035] p-2 text-sm text-gray-200 shadow-2xl backdrop-blur">
+                <div className="px-3 py-2">
+                  <p className="text-sm font-semibold text-white">{user?.name || 'Riley'}</p>
+                  <p className="text-xs text-gray-400">{user?.email || 'riley@example.com'}</p>
+                </div>
+                <div className="my-2 h-px bg-white/10" />
+                <button
+                  type="button"
+                  onClick={() => onNavigate?.('profile')}
+                  className="w-full rounded-lg px-3 py-2 text-left hover:bg-white/5"
+                >
                   👤 My Profile
                 </button>
-                <button type="button" className="w-full rounded-lg px-3 py-2 text-left hover:bg-white/5">
+                <button
+                  type="button"
+                  onClick={() => onNavigate?.('mybooks')}
+                  className="w-full rounded-lg px-3 py-2 text-left hover:bg-white/5"
+                >
+                  📚 My Books
+                </button>
+                <button
+                  type="button"
+                  onClick={onOpenSettings}
+                  className="w-full rounded-lg px-3 py-2 text-left hover:bg-white/5"
+                >
                   ⚙️ Settings
                 </button>
+                <div className="my-2 h-px bg-white/10" />
                 <button
                   type="button"
                   onClick={onSignOut}
