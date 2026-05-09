@@ -3,10 +3,12 @@ import { Heart, Search, X, Loader2 } from 'lucide-react';
 
 const popularChips = ['Atomic Habits', 'Harry Potter', 'Self Help', 'Fiction', 'Science'];
 
-const SearchBooksView = ({ searchQuery, onSearchChange }) => {
+const SearchBooksView = ({ searchQuery, onSearchChange, onToggleWishlist, wishlist }) => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const isInWishlist = (bookId) => wishlist.some((b) => b.id === bookId || b.key === bookId);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -131,8 +133,15 @@ const SearchBooksView = ({ searchQuery, onSearchChange }) => {
                 >
                   + Library
                 </button>
-                <button type="button" className="rounded-lg bg-white/5 p-2 text-pink-300 transition hover:bg-white/10">
-                  <Heart size={16} />
+                <button
+                  type="button"
+                  onClick={() => onToggleWishlist(book)}
+                  className={`rounded-lg p-2 transition ${isInWishlist(book.id)
+                    ? 'bg-pink-600/20 text-pink-400'
+                    : 'bg-white/5 text-pink-300 hover:bg-white/10'
+                    }`}
+                >
+                  <Heart size={16} fill={isInWishlist(book.id) ? 'currentColor' : 'none'} />
                 </button>
               </div>
             </div>

@@ -111,6 +111,32 @@ const CustomerDashboard = () => {
     setShowAvatarDropdown(false);
   };
 
+  const toggleWishlist = (book) => {
+    setMyBooks((prev) => {
+      const isExist = prev.find((b) => b.id === book.id || b.key === book.id);
+      if (isExist) {
+        // If it's already in myBooks, just toggle status if it was wishlist, 
+        // or remove it if it was added from search
+        if (isExist.status === 'wishlist') {
+          return prev.filter((b) => b.id !== book.id && b.key !== book.id);
+        }
+        return prev;
+      }
+
+      // If it's a new book from search
+      return [
+        ...prev,
+        {
+          ...book,
+          id: book.id,
+          key: book.id,
+          status: 'wishlist',
+          progress: 0,
+        }
+      ];
+    });
+  };
+
   const mobileTabs = [
     { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
     { id: 'mybooks', label: 'Books', icon: BookOpen },
@@ -149,10 +175,18 @@ const CustomerDashboard = () => {
           />
         )}
         {activeSection === 'search' && (
-          <SearchBooksView searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+          <SearchBooksView
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onToggleWishlist={toggleWishlist}
+            wishlist={myBooks.filter(b => b.status === 'wishlist')}
+          />
         )}
         {activeSection === 'wishlist' && (
-          <WishlistView books={myBooks.filter((book) => book.status === 'wishlist')} />
+          <WishlistView
+            books={myBooks.filter((book) => book.status === 'wishlist')}
+            onRemove={toggleWishlist}
+          />
         )}
         {activeSection === 'community' && (
           <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center text-gray-300 backdrop-blur">
