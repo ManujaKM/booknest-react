@@ -106,8 +106,11 @@ const CustomerDashboard = () => {
     navigate('/login');
   };
 
-  const handleSectionChange = (section) => {
+  const handleSectionChange = (section, options = {}) => {
     setActiveSection(section);
+    if (options.filter) {
+      setActiveFilter(options.filter);
+    }
     setShowNotifDropdown(false);
     setShowAvatarDropdown(false);
   };
@@ -167,7 +170,12 @@ const CustomerDashboard = () => {
       />
 
       <main className="pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8 pb-24">
-        {activeSection === 'dashboard' && <DashboardView />}
+        {activeSection === 'dashboard' && (
+          <DashboardView
+            onNavigate={handleSectionChange}
+            onOpenReading={() => handleSectionChange('mybooks', { filter: 'reading' })}
+          />
+        )}
         {activeSection === 'mybooks' && (
           <MyBooksView
             books={myBooks}
