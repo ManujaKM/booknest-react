@@ -2,7 +2,6 @@ import {
   Heart,
   LayoutDashboard,
   LogOut,
-  Search,
   Settings,
   User,
   Users
@@ -10,7 +9,6 @@ import {
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'search', label: 'Search Books', icon: Search },
   { id: 'wishlist', label: 'Wishlist', icon: Heart },
   { id: 'community', label: 'Community', icon: Users },
   { id: 'profile', label: 'Profile', icon: User }
@@ -46,11 +44,10 @@ const CustomerSidebar = ({ user, activeSection, onSectionChange, onLogout }) => 
               key={item.id}
               type="button"
               onClick={() => onSectionChange(item.id)}
-              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition ${
-                isActive
-                  ? 'border border-purple-500/30 bg-purple-600/20 text-purple-300'
-                  : 'text-gray-400 hover:bg-white/5 hover:text-white'
-              }`}
+              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition ${isActive
+                ? 'border border-purple-500/30 bg-purple-600/20 text-purple-300'
+                : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                }`}
             >
               <Icon size={18} />
               {item.label}
@@ -62,7 +59,11 @@ const CustomerSidebar = ({ user, activeSection, onSectionChange, onLogout }) => 
       <div className="mt-6 space-y-2 text-sm">
         <button
           type="button"
-          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-gray-500 transition hover:bg-white/5 hover:text-white"
+          onClick={() => onSectionChange('settings')}
+          className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 transition ${activeSection === 'settings'
+            ? 'border border-purple-500/30 bg-purple-600/20 text-purple-300'
+            : 'text-gray-500 hover:bg-white/5 hover:text-white'
+            }`}
         >
           <Settings size={18} />
           Settings

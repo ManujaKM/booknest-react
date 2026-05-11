@@ -11,12 +11,10 @@ const EditNameModal = ({ currentName, onSave, onClose }) => {
   };
 
   return (
-    /* backdrop */
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={onClose}
     >
-      {/* modal card – stop propagation so clicking inside doesn't close */}
       <div
         className="relative w-full max-w-sm animate-[fadeInUp_0.2s_ease] rounded-2xl border border-white/10 bg-[#1a1025] p-8 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
@@ -73,7 +71,6 @@ const EditNameModal = ({ currentName, onSave, onClose }) => {
         </form>
       </div>
 
-      {/* keyframe for entry animation */}
       <style>{`
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(16px) scale(0.97); }
@@ -88,7 +85,6 @@ const EditNameModal = ({ currentName, onSave, onClose }) => {
 const ProfileView = ({ user }) => {
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState(user?.name || 'Riley');
-  const [notificationsOn, setNotificationsOn] = useState(true);
   const initial = name?.charAt(0)?.toUpperCase() || 'R';
 
   const handleSave = (newName) => {
@@ -114,15 +110,16 @@ const ProfileView = ({ user }) => {
       )}
 
       <div className="grid gap-6 lg:grid-cols-[1fr,2fr]">
+        {/* ── Left: profile card ── */}
         <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center backdrop-blur">
           <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-3xl font-semibold text-white">
             {initial}
           </div>
+
           <button type="button" className="mt-3 text-xs text-purple-300">
             Change Photo
           </button>
 
-          {/* name row – pencil also opens modal */}
           <div className="mt-4 flex items-center justify-center gap-2">
             <h3 className="text-xl font-semibold text-white">{name}</h3>
             <button
@@ -150,20 +147,28 @@ const ProfileView = ({ user }) => {
           </button>
         </div>
 
-      <div className="space-y-6">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-          <h3 className="text-lg font-semibold text-white">Preferences</h3>
-          <div className="mt-4">
-            <p className="text-sm text-gray-400">Favorite Genres</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {['Fiction', 'Self-Help', 'Science'].map((genre) => (
-                <span key={genre} className="rounded-full border border-purple-500/30 bg-purple-600/20 px-3 py-1 text-xs text-purple-300">
-                  {genre}
-                </span>
-              ))}
-              <button type="button" className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-300">
-                + Add Genre
-              </button>
+        {/* ── Right: preferences ── */}
+        <div className="space-y-6">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+            <h3 className="text-lg font-semibold text-white">Preferences</h3>
+            <div className="mt-4">
+              <p className="text-sm text-gray-400">Favorite Genres</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {['Fiction', 'Self-Help', 'Science'].map((genre) => (
+                  <span
+                    key={genre}
+                    className="rounded-full border border-purple-500/30 bg-purple-600/20 px-3 py-1 text-xs text-purple-300"
+                  >
+                    {genre}
+                  </span>
+                ))}
+                <button
+                  type="button"
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-300"
+                >
+                  + Add Genre
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -173,4 +178,3 @@ const ProfileView = ({ user }) => {
 };
 
 export default ProfileView;
-
