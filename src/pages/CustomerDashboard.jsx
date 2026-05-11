@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import CustomerTopbar from '../components/customer/CustomerTopbar.jsx';
 import CustomerSidebar from '../components/customer/CustomerSidebar.jsx';
 import DashboardView from '../components/customer/DashboardView.jsx';
-import MyBooksView from '../components/customer/MyBooksView.jsx';
 import SearchBooksView from '../components/customer/SearchBooksView.jsx';
 import WishlistView from '../components/customer/WishlistView.jsx';
 import ProfileView from '../components/customer/ProfileView.jsx';
+import CommunityView from '../components/customer/community/CommunityView.jsx';
 import {
-  BookOpen,
   Heart,
   LayoutDashboard,
   Search,
@@ -70,7 +69,6 @@ const CustomerDashboard = () => {
   const [showAvatarDropdown, setShowAvatarDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [myBooks, setMyBooks] = useState(hardcodedBooks);
-  const [activeFilter, setActiveFilter] = useState('all');
 
   const user = useMemo(() => {
     const stored = localStorage.getItem('bn_user');
@@ -139,7 +137,6 @@ const CustomerDashboard = () => {
 
   const mobileTabs = [
     { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
-    { id: 'mybooks', label: 'Books', icon: BookOpen },
     { id: 'search', label: 'Search', icon: Search },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
     { id: 'profile', label: 'Profile', icon: User }
@@ -166,12 +163,10 @@ const CustomerDashboard = () => {
       />
 
       <main className="pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8 pb-24">
-        {activeSection === 'dashboard' && <DashboardView />}
-        {activeSection === 'mybooks' && (
-          <MyBooksView
-            books={myBooks}
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
+        {activeSection === 'dashboard' && (
+          <DashboardView
+            onNavigate={handleSectionChange}
+            onOpenReading={() => handleSectionChange('wishlist')}
           />
         )}
         {activeSection === 'search' && (
@@ -188,18 +183,7 @@ const CustomerDashboard = () => {
             onRemove={toggleWishlist}
           />
         )}
-        {activeSection === 'community' && (
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center text-gray-300 backdrop-blur">
-            <h2 className="text-2xl font-bold text-white">Community 👥</h2>
-            <p className="mt-3 text-sm text-gray-400">Connect with readers and share your favorite books.</p>
-            <button
-              type="button"
-              className="mt-5 rounded-xl bg-purple-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-purple-500"
-            >
-              Explore Community
-            </button>
-          </div>
-        )}
+        {activeSection === 'community' && <CommunityView user={user} />}
         {activeSection === 'profile' && <ProfileView user={user} />}
       </main>
 
