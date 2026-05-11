@@ -44,6 +44,7 @@ const DashboardView = ({ onNavigate, onOpenReading, onOpenShare, onAddToWishlist
     }
   ];
 
+
   const bars = [40, 65, 30, 80, 55, 90, 45];
   const pages = [12, 15, 7, 18, 11, 21, 9];
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
