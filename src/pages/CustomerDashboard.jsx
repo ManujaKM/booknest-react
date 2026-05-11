@@ -104,7 +104,7 @@ const CustomerDashboard = () => {
   };
 
   const handleSectionChange = (section) => {
-    setActiveSection(section === 'mybooks' ? 'wishlist' : section);
+    setActiveSection(section);
     setShowNotifDropdown(false);
     setShowAvatarDropdown(false);
   };

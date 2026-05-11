@@ -202,13 +202,6 @@ const CustomerTopbar = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => onNavigate?.('mybooks')}
-                  className="w-full rounded-lg px-3 py-2 text-left hover:bg-white/5"
-                >
-                  📚 My Books
-                </button>
-                <button
-                  type="button"
                   onClick={onOpenSettings}
                   className="w-full rounded-lg px-3 py-2 text-left hover:bg-white/5"
                 >

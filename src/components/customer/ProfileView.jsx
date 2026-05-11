@@ -60,28 +60,6 @@ const ProfileView = ({ user }) => {
 
       <div className="space-y-6">
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-          <h3 className="text-lg font-semibold text-white">Reading Stats</h3>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl bg-white/5 px-4 py-3">
-              <p className="text-xs text-gray-500">Books Read</p>
-              <p className="text-xl font-semibold text-white">24</p>
-            </div>
-            <div className="rounded-xl bg-white/5 px-4 py-3">
-              <p className="text-xs text-gray-500">Pages Read</p>
-              <p className="text-xl font-semibold text-white">6,420</p>
-            </div>
-            <div className="rounded-xl bg-white/5 px-4 py-3">
-              <p className="text-xs text-gray-500">Books Shared</p>
-              <p className="text-xl font-semibold text-white">7</p>
-            </div>
-            <div className="rounded-xl bg-white/5 px-4 py-3">
-              <p className="text-xs text-gray-500">Reviews Written</p>
-              <p className="text-xl font-semibold text-white">5</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
           <h3 className="text-lg font-semibold text-white">Preferences</h3>
           <div className="mt-4">
             <p className="text-sm text-gray-400">Favorite Genres</p>

@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
-import { BookMarked, BookOpen, Heart, Share2, TrendingUp } from 'lucide-react';
-import StatsCard from './StatsCard.jsx';
+import { TrendingUp } from 'lucide-react';
 import ReadingProgress from './ReadingProgress.jsx';
 import ActivityFeed from './ActivityFeed.jsx';
 
@@ -85,7 +84,7 @@ const DashboardView = ({ onNavigate, onOpenReading, onOpenShare, onAddToWishlist
           <p className="mt-2 text-gray-300">You have 3 books to finish this month</p>
           <button
             type="button"
-            onClick={() => onNavigate?.('mybooks', { filter: 'reading' })}
+            onClick={() => onNavigate?.('wishlist')}
             className="mt-5 rounded-xl bg-purple-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-purple-500"
           >
             Continue Reading →
@@ -102,70 +101,11 @@ const DashboardView = ({ onNavigate, onOpenReading, onOpenShare, onAddToWishlist
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <button
-          type="button"
-          onClick={() => onNavigate?.('mybooks', { filter: 'finished' })}
-          className="text-left"
-        >
-          <StatsCard
-            icon={BookOpen}
-            iconBg="bg-purple-600/60"
-            value="24"
-            label="Books Read"
-            trend="+3 this month"
-            trendColor="text-emerald-400"
-          />
-        </button>
-        <button
-          type="button"
-          onClick={() => onNavigate?.('mybooks', { filter: 'reading' })}
-          className="text-left"
-        >
-          <StatsCard
-            icon={BookMarked}
-            iconBg="bg-blue-500/60"
-            value="2"
-            label="Reading Now"
-            trend="In progress"
-            trendColor="text-amber-300"
-          />
-        </button>
-        <button
-          type="button"
-          onClick={() => onNavigate?.('wishlist')}
-          className="text-left"
-        >
-          <StatsCard
-            icon={Heart}
-            iconBg="bg-pink-500/60"
-            value="12"
-            label="Wishlist"
-            trend="+5 this week"
-            trendColor="text-emerald-400"
-          />
-        </button>
-        <button
-          type="button"
-          onClick={() => onOpenShare?.()}
-          className="text-left"
-        >
-          <StatsCard
-            icon={Share2}
-            iconBg="bg-emerald-500/60"
-            value="7"
-            label="Books Shared"
-            trend="With friends"
-            trendColor="text-gray-400"
-          />
-        </button>
-      </div>
-
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-bold text-white">Currently Reading 📖</h3>
         <button
           type="button"
-          onClick={() => onNavigate?.('mybooks', { filter: 'reading' })}
+          onClick={() => onNavigate?.('wishlist')}
           className="text-sm text-purple-300 transition hover:text-purple-200"
         >
           See all →
@@ -177,24 +117,14 @@ const DashboardView = ({ onNavigate, onOpenReading, onOpenShare, onAddToWishlist
           author="James Clear"
           progress={65}
           coverClass="bg-purple-500/40"
-          onContinue={() => onOpenReading?.({
-            title: 'Atomic Habits',
-            author: 'James Clear',
-            progress: 65,
-            cover: 'bg-purple-500/40'
-          })}
+          onContinue={() => onNavigate?.('wishlist')}
         />
         <ReadingProgress
           title="The Midnight Library"
           author="Matt Haig"
           progress={30}
           coverClass="bg-blue-500/40"
-          onContinue={() => onOpenReading?.({
-            title: 'The Midnight Library',
-            author: 'Matt Haig',
-            progress: 30,
-            cover: 'bg-blue-500/40'
-          })}
+          onContinue={() => onNavigate?.('wishlist')}
         />
       </div>
 
