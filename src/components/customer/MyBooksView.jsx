@@ -3,22 +3,13 @@ import { TrendingUp } from 'lucide-react';
 import BookCard from './BookCard.jsx';
 import ReaderView from './ReaderView.jsx';
 
-const filters = [
-  { id: 'all', label: 'All' },
-  { id: 'reading', label: 'Reading' },
-  { id: 'finished', label: 'Finished' },
-  { id: 'wishlist', label: 'Wishlist' }
-];
-
 const bars = [60, 45, 80, 55, 95, 70, 50];
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-const MyBooksView = ({ books, activeFilter, onFilterChange }) => {
+const MyBooksView = ({ books }) => {
   const [readingBook, setReadingBook] = useState(null);
   const [localBooks, setLocalBooks] = useState(books);
-
-  const filteredBooks =
-    activeFilter === 'all' ? localBooks : localBooks.filter((book) => book.status === activeFilter);
+  const filteredBooks = localBooks;
 
   const handleRead = (book) => {
     setReadingBook(book);
@@ -83,24 +74,6 @@ const MyBooksView = ({ books, activeFilter, onFilterChange }) => {
           <span className="rounded-full border border-purple-500/30 bg-purple-600/20 px-3 py-1 text-xs text-purple-300">
             {books.length} Books
           </span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {filters.map((filter) => {
-            const isActive = activeFilter === filter.id;
-            return (
-              <button
-                key={filter.id}
-                type="button"
-                onClick={() => onFilterChange(filter.id)}
-                className={`rounded-full px-4 py-2 text-sm transition ${isActive
-                  ? 'bg-purple-600/80 text-white'
-                  : 'border border-white/10 bg-white/5 text-gray-300 hover:bg-white/10'
-                  }`}
-              >
-                {filter.label}
-              </button>
-            );
-          })}
         </div>
       </div>
 

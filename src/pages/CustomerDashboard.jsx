@@ -3,13 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import CustomerTopbar from '../components/customer/CustomerTopbar.jsx';
 import CustomerSidebar from '../components/customer/CustomerSidebar.jsx';
 import DashboardView from '../components/customer/DashboardView.jsx';
-import MyBooksView from '../components/customer/MyBooksView.jsx';
 import SearchBooksView from '../components/customer/SearchBooksView.jsx';
 import WishlistView from '../components/customer/WishlistView.jsx';
 import ProfileView from '../components/customer/ProfileView.jsx';
 import CommunityView from '../components/customer/community/CommunityView.jsx';
 import {
-  BookOpen,
   Heart,
   LayoutDashboard,
   Search,
@@ -71,7 +69,6 @@ const CustomerDashboard = () => {
   const [showAvatarDropdown, setShowAvatarDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [myBooks, setMyBooks] = useState(hardcodedBooks);
-  const [activeFilter, setActiveFilter] = useState('all');
 
   const user = useMemo(() => {
     const stored = localStorage.getItem('bn_user');
@@ -106,11 +103,8 @@ const CustomerDashboard = () => {
     navigate('/login');
   };
 
-  const handleSectionChange = (section, options = {}) => {
-    setActiveSection(section);
-    if (options.filter) {
-      setActiveFilter(options.filter);
-    }
+  const handleSectionChange = (section) => {
+    setActiveSection(section === 'mybooks' ? 'wishlist' : section);
     setShowNotifDropdown(false);
     setShowAvatarDropdown(false);
   };
@@ -143,7 +137,6 @@ const CustomerDashboard = () => {
 
   const mobileTabs = [
     { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
-    { id: 'mybooks', label: 'Books', icon: BookOpen },
     { id: 'search', label: 'Search', icon: Search },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
     { id: 'profile', label: 'Profile', icon: User }
@@ -173,14 +166,7 @@ const CustomerDashboard = () => {
         {activeSection === 'dashboard' && (
           <DashboardView
             onNavigate={handleSectionChange}
-            onOpenReading={() => handleSectionChange('mybooks', { filter: 'reading' })}
-          />
-        )}
-        {activeSection === 'mybooks' && (
-          <MyBooksView
-            books={myBooks}
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
+            onOpenReading={() => handleSectionChange('wishlist')}
           />
         )}
         {activeSection === 'search' && (

@@ -1,5 +1,4 @@
 import {
-  BookOpen,
   Heart,
   LayoutDashboard,
   LogOut,
@@ -11,7 +10,6 @@ import {
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'mybooks', label: 'My Books', icon: BookOpen },
   { id: 'search', label: 'Search Books', icon: Search },
   { id: 'wishlist', label: 'Wishlist', icon: Heart },
   { id: 'community', label: 'Community', icon: Users },
