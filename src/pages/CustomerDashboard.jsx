@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import CustomerTopbar from '../components/customer/CustomerTopbar.jsx';
 import CustomerSidebar from '../components/customer/CustomerSidebar.jsx';
 import DashboardView from '../components/customer/DashboardView.jsx';
-import SearchBooksView from '../components/customer/SearchBooksView.jsx';
 import WishlistView from '../components/customer/WishlistView.jsx';
 import ProfileView from '../components/customer/ProfileView.jsx';
 import CommunityView from '../components/customer/community/CommunityView.jsx';
+import SettingsView from '../components/customer/SettingsView.jsx';
+import ReaderView from '../components/customer/ReaderView.jsx';
 import {
   Heart,
   LayoutDashboard,
-  Search,
   User
 } from 'lucide-react';
 
@@ -69,6 +69,7 @@ const CustomerDashboard = () => {
   const [showAvatarDropdown, setShowAvatarDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [myBooks, setMyBooks] = useState(hardcodedBooks);
+  const [previewBook, setPreviewBook] = useState(null);
 
   const user = useMemo(() => {
     const stored = localStorage.getItem('bn_user');
@@ -137,7 +138,6 @@ const CustomerDashboard = () => {
 
   const mobileTabs = [
     { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
-    { id: 'search', label: 'Search', icon: Search },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
     { id: 'profile', label: 'Profile', icon: User }
   ];
@@ -151,9 +151,9 @@ const CustomerDashboard = () => {
         showAvatarDropdown={showAvatarDropdown}
         onToggleNotifications={() => setShowNotifDropdown((prev) => !prev)}
         onToggleAvatar={() => setShowAvatarDropdown((prev) => !prev)}
-        onSearchChange={setSearchQuery}
-        searchQuery={searchQuery}
         onSignOut={handleLogout}
+        onNavigate={handleSectionChange}
+        onPreview={setPreviewBook}
       />
       <CustomerSidebar
         user={user}
@@ -162,29 +162,26 @@ const CustomerDashboard = () => {
         onLogout={handleLogout}
       />
 
-      <main className="pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8 pb-24">
+      <main className="pb-24 pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8">
+        {previewBook && (
+          <ReaderView book={previewBook} onClose={() => setPreviewBook(null)} />
+        )}
         {activeSection === 'dashboard' && (
           <DashboardView
             onNavigate={handleSectionChange}
-            onOpenReading={() => handleSectionChange('wishlist')}
-          />
-        )}
-        {activeSection === 'search' && (
-          <SearchBooksView
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onToggleWishlist={toggleWishlist}
-            wishlist={myBooks.filter(b => b.status === 'wishlist')}
+            onPreview={setPreviewBook}
           />
         )}
         {activeSection === 'wishlist' && (
           <WishlistView
             books={myBooks.filter((book) => book.status === 'wishlist')}
             onRemove={toggleWishlist}
+            onPreview={setPreviewBook}
           />
         )}
         {activeSection === 'community' && <CommunityView user={user} />}
         {activeSection === 'profile' && <ProfileView user={user} />}
+        {activeSection === 'settings' && <SettingsView user={user} />}
       </main>
 
       <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-black/40 backdrop-blur lg:hidden">
