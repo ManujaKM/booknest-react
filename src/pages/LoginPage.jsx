@@ -6,15 +6,15 @@ import { BookOpen, Search, Users } from 'lucide-react';
 const highlights = [
   {
     icon: BookOpen,
-    title: 'Manage your book collection'
+    title: 'Buy and sell books instantly'
   },
   {
     icon: Search,
-    title: 'Discover new reads'
+    title: 'Discover deals from verified sellers'
   },
   {
     icon: Users,
-    title: 'Connect with readers'
+    title: 'Build your wishlist and cart'
   }
 ];
 
@@ -36,7 +36,7 @@ const LoginPage = () => {
                   <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-600 text-white">B</span>
                   BookNest
                 </div>
-                <p className="text-sm text-slate-300">Share Books. Discover Stories.</p>
+                <p className="text-sm text-slate-300">Buy and sell books with confidence.</p>
               </div>
 
               <div className="space-y-4">
