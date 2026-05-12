@@ -7,6 +7,7 @@ import WishlistView from '../components/customer/WishlistView.jsx';
 import ProfileView from '../components/customer/ProfileView.jsx';
 import CommunityView from '../components/customer/community/CommunityView.jsx';
 import SettingsView from '../components/customer/SettingsView.jsx';
+import ReaderView from '../components/customer/ReaderView.jsx';
 import {
   Heart,
   LayoutDashboard,
@@ -68,6 +69,7 @@ const CustomerDashboard = () => {
   const [showAvatarDropdown, setShowAvatarDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [myBooks, setMyBooks] = useState(hardcodedBooks);
+  const [previewBook, setPreviewBook] = useState(null);
 
   const user = useMemo(() => {
     const stored = localStorage.getItem('bn_user');
