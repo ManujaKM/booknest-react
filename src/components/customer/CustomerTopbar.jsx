@@ -22,16 +22,30 @@ const SearchDropdown = ({ query, onClose, onPreview }) => {
         );
         const data = await res.json();
         setResults(
-          data.docs.map((doc) => ({
-            id: doc.key,
-            title: doc.title,
-            author: doc.author_name?.[0] || 'Unknown Author',
-            category: doc.subject?.[0] || 'General',
-            coverUrl: doc.cover_i
-              ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-S.jpg`
-              : null,
-            price: `$${((doc.title.length % 12) + 8)}.99`,
-          }))
+          data.docs.map((doc, index) => {
+            const basePrice = (doc.title.length % 12) + 8.99;
+            return {
+              id: doc.key,
+              title: doc.title,
+              author: doc.author_name?.[0] || 'Unknown Author',
+              category: doc.subject?.[0] || 'General',
+              coverUrl: doc.cover_i
+                ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-S.jpg`
+                : null,
+              thumbnail: doc.cover_i
+                ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg`
+                : null,
+              price: basePrice.toFixed(2),
+              originalPrice: (basePrice + 4).toFixed(2),
+              rating: 4.2 + (index % 3) * 0.2,
+              ratingsCount: 1200 + index * 230,
+              badge: 'Featured',
+              color: 'purple',
+              seller: 'BookNest',
+              stock: 8 + index,
+              previewLink: ''
+            };
+          })
         );
       } catch {
         setResults([]);

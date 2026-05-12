@@ -197,6 +197,33 @@ body.page-fade-out {
   transition: opacity 0.2s ease;
 }
 
+/* Custom scrollbar for horizontal book rows */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.4);
+  border-radius: 999px;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth scroll for book rows */
+.book-row {
+  scroll-snap-type: x mandatory;
+}
+
+.book-row > * {
+  scroll-snap-align: start;
+}
+
 body.page-fade-in {
   opacity: 1;
   transition: opacity 0.2s ease;

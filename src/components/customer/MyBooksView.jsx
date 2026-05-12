@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TrendingUp } from 'lucide-react';
-import BookCard from './BookCard.jsx';
+import ReadingBookCard from './ReadingBookCard.jsx';
 import ReaderView from './ReaderView.jsx';
 
 const bars = [60, 45, 80, 55, 95, 70, 50];
@@ -87,7 +87,7 @@ const MyBooksView = ({ books }) => {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {filteredBooks.map((book) => (
-          <BookCard key={book.id} book={book} onRead={handleRead} />
+          <ReadingBookCard key={book.id} book={book} onRead={handleRead} />
         ))}
       </div>
     </div>
