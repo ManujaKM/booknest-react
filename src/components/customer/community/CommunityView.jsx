@@ -909,65 +909,6 @@ const CommunityView = ({ user }) => {
       </section>
 
       <aside className="hidden xl:block space-y-4">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-          <h3 className="text-base font-semibold text-white">Suggested Readers</h3>
-          <div className="mt-3 divide-y divide-white/5">
-            {suggestedReaders.map((reader) => (
-              <div key={reader.id} className="flex items-center gap-3 py-3">
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${
-                    reader.color
-                  } text-xs text-white`}
-                >
-                  {reader.id}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-white">{reader.name}</p>
-                  <p className="text-xs text-gray-400">{reader.role}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleToggleFollow(reader.id)}
-                  className={`rounded-full px-4 py-1 text-xs transition ${
-                    followedUsers.includes(reader.id)
-                      ? 'bg-purple-600 text-white'
-                      : 'border border-purple-500/40 text-purple-300'
-                  }`}
-                >
-                  {followedUsers.includes(reader.id) ? 'Following ✓' : 'Follow'}
-                </button>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowFindReaders(true)}
-            className="mt-3 w-full text-right text-sm text-purple-300"
-          >
-            View All Suggestions →
-          </button>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-          <h3 className="text-base font-semibold text-white">📈 Trending in Community</h3>
-          <div className="mt-3 space-y-3">
-            {trendingBooks.map((book) => (
-              <button
-                key={book.id}
-                type="button"
-                onClick={() => setSelectedBookFilter(book.title)}
-                className="flex w-full items-center gap-3 rounded-xl px-2 py-1 text-left text-sm text-gray-300 transition hover:bg-white/5"
-              >
-                <span className="text-xs text-gray-500">#{book.id}</span>
-                <div className={`h-14 w-10 rounded-lg ${book.color}`} />
-                <div>
-                  <p className="text-sm font-semibold text-white">{book.title}</p>
-                  <p className="text-xs text-gray-400">{book.discussions} discussions</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
           <h3 className="text-base font-semibold text-white">⭕ Active Circles</h3>

@@ -1,4 +1,5 @@
 import {
+  BookOpen,
   Heart,
   LayoutDashboard,
   LogOut,
@@ -9,19 +10,27 @@ import {
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'shop', label: 'Browse Books', icon: BookOpen },
   { id: 'wishlist', label: 'Wishlist', icon: Heart },
   { id: 'community', label: 'Community', icon: Users },
   { id: 'profile', label: 'Profile', icon: User }
 ];
 
-const CustomerSidebar = ({ user, activeSection, onSectionChange, onLogout }) => {
+const CustomerSidebar = ({ user, avatarUrl, stats, activeSection, onSectionChange, onLogout }) => {
   const initial = user?.name?.charAt(0)?.toUpperCase() || 'R';
+  const booksCount = stats?.booksCount ?? 0;
+  const wishlistCount = stats?.wishlistCount ?? 0;
+  const friendsCount = stats?.friendsCount ?? 0;
 
   return (
     <aside className="fixed left-0 top-0 hidden h-full w-64 flex-col border-r border-white/10 bg-black/20 pt-20 pb-6 px-4 backdrop-blur lg:flex">
       <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-2xl font-semibold text-white">
-          {initial}
+        <div className="mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-2xl font-semibold text-white">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+          ) : (
+            initial
+          )}
         </div>
         <h3 className="mt-3 text-lg font-semibold text-white">{user?.name || 'Riley'}</h3>
         <p className="text-xs text-gray-400">{user?.email || 'riley@example.com'}</p>
@@ -29,9 +38,9 @@ const CustomerSidebar = ({ user, activeSection, onSectionChange, onLogout }) => 
           Customer
         </span>
         <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-gray-300">
-          <div className="rounded-xl bg-white/5 px-2 py-2">📚 24 Books</div>
-          <div className="rounded-xl bg-white/5 px-2 py-2">❤️ 12 Wishlist</div>
-          <div className="rounded-xl bg-white/5 px-2 py-2">👥 8 Friends</div>
+          <div className="rounded-xl bg-white/5 px-2 py-2">📚 {booksCount} Books</div>
+          <div className="rounded-xl bg-white/5 px-2 py-2">❤️ {wishlistCount} Wishlist</div>
+          <div className="rounded-xl bg-white/5 px-2 py-2">👥 {friendsCount} Friends</div>
         </div>
       </div>
 

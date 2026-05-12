@@ -1,178 +1,250 @@
-import { BookOpen, Heart, ShoppingCart, Sparkles, Tag } from 'lucide-react';
-import { useState } from 'react';
+import { BookOpen, Sparkles, Tag, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useGoogleBooks } from '../../hooks/useGoogleBooks.js';
+import BookCard from './BookCard.jsx';
+import BookCardSkeleton from './BookCardSkeleton.jsx';
+import PreviewModal from './PreviewModal.jsx';
+import { COVER_COLORS } from './bookStyles.js';
 
-const DashboardView = ({ onNavigate, onOpenReading, onOpenShare, onAddToWishlist }) => {
-  const [addedIds, setAddedIds] = useState([]);
-  const [hoveredBar, setHoveredBar] = useState(null);
-  const recommended = [
+const DashboardView = ({
+  addToCart,
+  toggleWishlist,
+  isInCart,
+  isInWishlist,
+  setActiveSection,
+  showToast
+}) => {
+  const { searchBooks, loading } = useGoogleBooks();
+  const [featuredBooks, setFeaturedBooks] = useState([]);
+  const [newArrivals, setNewArrivals] = useState([]);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const fallbackFeatured = [
     {
-      id: 1,
+      id: 'fallback-1',
       title: 'Project Hail Mary',
       author: 'Andy Weir',
-      cover: 'bg-emerald-500/40',
-      rating: '★★★★★'
+      thumbnail: null,
+      rating: 4.7,
+      ratingsCount: 3821,
+      price: '14.99',
+      originalPrice: '19.99',
+      badge: 'Bestseller',
+      color: 'green',
+      stock: 6
     },
     {
-      id: 2,
+      id: 'fallback-2',
       title: 'Deep Work',
       author: 'Cal Newport',
-      cover: 'bg-amber-500/40',
-      rating: '★★★★'
+      thumbnail: null,
+      rating: 4.4,
+      ratingsCount: 2190,
+      price: '12.99',
+      originalPrice: '17.99',
+      badge: 'Editor Pick',
+      color: 'amber',
+      stock: 9
     },
     {
-      id: 3,
+      id: 'fallback-3',
       title: 'The Alchemist',
       author: 'Paulo Coelho',
-      cover: 'bg-pink-500/40',
-      rating: '★★★★★'
+      thumbnail: null,
+      rating: 4.6,
+      ratingsCount: 4970,
+      price: '11.99',
+      originalPrice: '16.99',
+      badge: 'Classic',
+      color: 'pink',
+      stock: 4
     },
     {
-      id: 4,
+      id: 'fallback-4',
       title: 'Dune',
       author: 'Frank Herbert',
-      cover: 'bg-blue-500/40',
-      rating: '★★★★'
+      thumbnail: null,
+      rating: 4.5,
+      ratingsCount: 3420,
+      price: '15.99',
+      originalPrice: '21.99',
+      badge: 'Sci-Fi',
+      color: 'blue',
+      stock: 3
     },
     {
-      id: 5,
+      id: 'fallback-5',
       title: '1984',
       author: 'George Orwell',
-      cover: 'bg-purple-500/40',
-      rating: '★★★★★'
+      thumbnail: null,
+      rating: 4.3,
+      ratingsCount: 4105,
+      price: '10.99',
+      originalPrice: '14.99',
+      badge: 'Popular',
+      color: 'purple',
+      stock: 12
     }
   ];
 
-  const bars = [40, 65, 30, 80, 55, 90, 45];
-  const pages = [12, 15, 7, 18, 11, 21, 9];
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  useEffect(() => {
+    let isMounted = true;
 
-  const userName = (() => {
-    try { return JSON.parse(localStorage.getItem('bn_user'))?.name || 'there'; }
-    catch { return 'there'; }
-  })();
+    searchBooks({ query: 'bestseller fiction 2024', maxResults: 10 }).then((books) => {
+      if (!isMounted) return;
+      setFeaturedBooks(books.map((book, index) => ({
+        ...book,
+        badge: ['Bestseller', 'Editor Pick', 'Classic', 'Sci-Fi', 'Popular'][index % 5]
+      })));
+    });
 
-  const toggleWishlist = (id) =>
-    setWishlisted((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+    searchBooks({ query: 'new books 2025', maxResults: 8 }).then((books) => {
+      if (!isMounted) return;
+      setNewArrivals(books);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [searchBooks]);
 
   return (
     <div className="space-y-10 py-4">
+      <div className="relative rounded-3xl overflow-hidden mb-6 bg-gradient-to-r from-purple-900/80 to-indigo-900/80 border border-white/10 p-8 min-h-[200px] flex items-center justify-between">
+        <div className="absolute inset-0 opacity-30 bg-gradient-to-br from-purple-600 via-transparent to-blue-600" />
 
-      {/* ── Hero ── */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-purple-900/60 via-[#1a1025] to-indigo-900/40 p-8 backdrop-blur">
-        <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-purple-600/20 blur-3xl" />
-        <p className="text-sm font-medium text-purple-300">Welcome back, {userName} 👋</p>
-        <h2 className="mt-2 text-3xl font-bold text-white">
-          Discover Your Next<br />Great Read
-        </h2>
-        <p className="mt-2 text-sm text-gray-400">
-          Thousands of titles — preview any book, buy with one click.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => onNavigate?.('search')}
-            className="flex items-center gap-2 rounded-xl bg-purple-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-500"
-          >
-            <BookOpen size={16} /> Browse Books
-          </button>
-          <button
-            type="button"
-            onClick={() => onNavigate?.('wishlist')}
-            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm text-gray-200 transition hover:bg-white/10"
-          >
-            My Wishlist →
-          </button>
-        </div>
-        {/* decorative book stack */}
-        <div className="absolute bottom-4 right-8 flex gap-2 opacity-50">
-          <div className="h-16 w-10 -rotate-6 rounded-lg bg-purple-500/60 shadow-lg" />
-          <div className="h-16 w-10 rotate-2 rounded-lg bg-blue-500/60 shadow-lg" />
-          <div className="h-16 w-10 -rotate-3 rounded-lg bg-emerald-500/60 shadow-lg" />
-        </div>
-      </div>
-
-      {/* ── Promo banner ── */}
-      <div className="flex items-center gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-5 py-3">
-        <Tag size={15} className="flex-shrink-0 text-amber-400" />
-        <p className="text-sm text-amber-200">
-          <span className="font-semibold">Summer Sale:</span> 20% off your first order with code{' '}
-          <code className="rounded bg-amber-500/20 px-1.5 py-0.5 text-amber-300">BOOKNEST20</code>
-        </p>
-      </div>
-
-      {/* ── Featured Books ── */}
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles size={18} className="text-purple-400" />
-            <h3 className="text-xl font-bold text-white">Featured Books</h3>
+        <div className="relative z-10 max-w-lg">
+          <h1 className="text-4xl font-bold text-white leading-tight mb-3">
+            Discover Your Next<br />
+            <span className="text-purple-300">Great Read</span>
+          </h1>
+          <p className="text-gray-300 text-sm mb-6">
+            Thousands of titles — preview any book, buy with one click.
+          </p>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setActiveSection?.('shop')}
+              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200"
+            >
+              <BookOpen className="w-4 h-4" />
+              Browse Books
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSection?.('wishlist')}
+              className="bg-white/10 border border-white/20 text-white font-medium px-5 py-2.5 rounded-xl hover:bg-white/20 transition-all"
+            >
+              My Wishlist →
+            </button>
           </div>
+        </div>
+
+        <div className="relative hidden md:flex items-center gap-3 mr-4">
+          {['purple', 'blue', 'green'].map((color, index) => (
+            <div
+              key={color}
+              className={`w-20 h-28 rounded-xl bg-gradient-to-br ${COVER_COLORS[color]} transform ${index === 0 ? 'rotate-[-8deg]' : index === 1 ? 'rotate-[-2deg]' : 'rotate-[4deg]'} shadow-2xl border border-white/10`}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 mb-6 bg-white/5 border border-amber-500/30 rounded-2xl px-5 py-3">
+        <Tag className="w-4 h-4 text-amber-400 flex-shrink-0" />
+        <span className="text-white text-sm">
+          <span className="text-amber-400 font-bold">Summer Sale:</span> 20% off your first order with code
+        </span>
+        <span
+          className="bg-amber-500/20 border border-amber-500/40 text-amber-400 font-mono font-bold px-3 py-1 rounded-lg text-sm cursor-pointer hover:bg-amber-500/30 transition-colors select-all"
+          onClick={() => {
+            if (navigator?.clipboard) {
+              navigator.clipboard.writeText('BOOKNEST20');
+            }
+            showToast?.('Code copied!');
+          }}
+        >
+          BOOKNEST20
+        </span>
+        <span className="text-gray-500 text-xs ml-auto">Click to copy</span>
+      </div>
+
+      <section className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-purple-400" />
+            Featured Books
+          </h2>
           <button
             type="button"
-            onClick={() => onNavigate?.('search')}
-            className="text-sm text-purple-300 transition hover:text-purple-200"
+            onClick={() => setActiveSection?.('shop')}
+            className="text-purple-400 text-sm hover:text-purple-300 flex items-center gap-1"
           >
             View all →
           </button>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          {FEATURED.map((book) => {
-            const inWishlist = wishlisted.includes(book.id);
-            return (
-              <div
-                key={book.id}
-                className="group flex flex-col rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:border-purple-500/30 hover:bg-white/10"
-              >
-                {/* Cover */}
-                <div className={`relative flex h-40 w-full items-center justify-center rounded-xl ${book.cover}`}>
-                  <BookOpen size={28} className="text-white/25" />
-                  <span className="absolute left-2 top-2 rounded-full border border-white/20 bg-black/50 px-2 py-0.5 text-[10px] text-white backdrop-blur">
-                    {book.badge}
-                  </span>
-                  {/* Wishlist heart */}
-                  <button
-                    type="button"
-                    onClick={() => toggleWishlist(book.id)}
-                    className="absolute right-2 top-2 rounded-full bg-black/40 p-1.5 backdrop-blur transition hover:bg-black/60"
-                  >
-                    <Heart
-                      size={13}
-                      className={inWishlist ? 'text-pink-400' : 'text-white/50'}
-                      fill={inWishlist ? 'currentColor' : 'none'}
-                    />
-                  </button>
-                </div>
-
-                <h4 className="mt-3 line-clamp-1 text-sm font-semibold text-white">{book.title}</h4>
-                <p className="line-clamp-1 text-xs text-purple-300">{book.author}</p>
-                <p className="mt-0.5 text-xs text-amber-300">{book.rating}</p>
-
-                <div className="mt-auto pt-3 flex items-center justify-between gap-2">
-                  <span className="text-base font-bold text-white">{book.price}</span>
-                  <div className="flex gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => onPreview?.(book)}
-                      className="rounded-lg border border-purple-500/30 px-2.5 py-1.5 text-[11px] text-purple-300 transition hover:bg-purple-600/20"
-                    >
-                      Preview
-                    </button>
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 rounded-lg bg-purple-600 px-2.5 py-1.5 text-[11px] font-semibold text-white transition hover:bg-purple-500"
-                    >
-                      <ShoppingCart size={11} /> Buy
-                    </button>
-                  </div>
-                </div>
+        <div className="book-row flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-purple-600/50 scrollbar-track-transparent">
+          {loading ? (
+            Array(5).fill(0).map((_, index) => (
+              <div key={index} className="flex-none w-48">
+                <BookCardSkeleton />
               </div>
-            );
-          })}
+            ))
+          ) : (
+            (featuredBooks.length > 0 ? featuredBooks : fallbackFeatured).map((book) => (
+              <div key={book.id} className="flex-none w-48">
+                <BookCard
+                  book={book}
+                  onAddToCart={addToCart}
+                  onToggleWishlist={toggleWishlist}
+                  isInCart={isInCart}
+                  isInWishlist={isInWishlist}
+                  onPreview={(selected) => {
+                    setSelectedBook(selected);
+                    setShowPreview(true);
+                  }}
+                />
+              </div>
+            ))
+          )}
         </div>
-      </div>
+      </section>
 
-      {/* ── Why BookNest ── */}
+      <section className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Zap className="w-5 h-5 text-amber-400" />
+            New Arrivals
+          </h2>
+          <button
+            type="button"
+            onClick={() => setActiveSection?.('shop')}
+            className="text-purple-400 text-sm hover:text-purple-300"
+          >
+            View all →
+          </button>
+        </div>
+
+        <div className="book-row flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-purple-600/50 scrollbar-track-transparent">
+          {newArrivals.map((book) => (
+            <div key={book.id} className="flex-none w-48">
+              <BookCard
+                book={book}
+                onAddToCart={addToCart}
+                onToggleWishlist={toggleWishlist}
+                isInCart={isInCart}
+                isInWishlist={isInWishlist}
+                onPreview={(selected) => {
+                  setSelectedBook(selected);
+                  setShowPreview(true);
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="grid gap-4 sm:grid-cols-3">
         {[
           { emoji: '📖', title: 'Free Chapter Previews', desc: 'Read the first chapter of any book before you buy.' },
@@ -187,6 +259,15 @@ const DashboardView = ({ onNavigate, onOpenReading, onOpenShare, onAddToWishlist
         ))}
       </div>
 
+      {showPreview && selectedBook && (
+        <PreviewModal
+          book={selectedBook}
+          onClose={() => setShowPreview(false)}
+          onAddToCart={addToCart}
+          isInCart={isInCart}
+          onToggleWishlist={toggleWishlist}
+        />
+      )}
     </div>
   );
 };

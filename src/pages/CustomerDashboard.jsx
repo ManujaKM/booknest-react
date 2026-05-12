@@ -1,86 +1,51 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CustomerTopbar from '../components/customer/CustomerTopbar.jsx';
 import CustomerSidebar from '../components/customer/CustomerSidebar.jsx';
 import DashboardView from '../components/customer/DashboardView.jsx';
+import BrowseBooksView from '../components/customer/BrowseBooksView.jsx';
 import WishlistView from '../components/customer/WishlistView.jsx';
 import ProfileView from '../components/customer/ProfileView.jsx';
 import CommunityView from '../components/customer/community/CommunityView.jsx';
 import SettingsView from '../components/customer/SettingsView.jsx';
-import ReaderView from '../components/customer/ReaderView.jsx';
+import PreviewModal from '../components/customer/PreviewModal.jsx';
 import {
+  BookOpen,
   Heart,
   LayoutDashboard,
   User
 } from 'lucide-react';
 
-const hardcodedBooks = [
-  {
-    id: 1,
-    title: 'Atomic Habits',
-    author: 'James Clear',
-    status: 'reading',
-    progress: 65,
-    cover: 'bg-purple-500/40'
-  },
-  {
-    id: 2,
-    title: 'The Midnight Library',
-    author: 'Matt Haig',
-    status: 'reading',
-    progress: 30,
-    cover: 'bg-blue-500/40'
-  },
-  {
-    id: 3,
-    title: 'Project Hail Mary',
-    author: 'Andy Weir',
-    status: 'finished',
-    cover: 'bg-emerald-500/40'
-  },
-  {
-    id: 4,
-    title: 'Deep Work',
-    author: 'Cal Newport',
-    status: 'finished',
-    cover: 'bg-amber-500/40'
-  },
-  {
-    id: 5,
-    title: 'The Alchemist',
-    author: 'Paulo Coelho',
-    status: 'wishlist',
-    cover: 'bg-pink-500/40'
-  },
-  {
-    id: 6,
-    title: 'Dune',
-    author: 'Frank Herbert',
-    status: 'wishlist',
-    cover: 'bg-indigo-500/40'
-  }
-];
-
 const CustomerDashboard = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('dashboard');
-  const [notifications, setNotifications] = useState(3);
+  const [notifications] = useState(3);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [showAvatarDropdown, setShowAvatarDropdown] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [myBooks, setMyBooks] = useState(hardcodedBooks);
+  const [cart, setCart] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const [toast, setToast] = useState(null);
   const [previewBook, setPreviewBook] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState('');
 
-  const user = useMemo(() => {
-    const stored = localStorage.getItem('bn_user');
-    if (!stored) {
-      return { name: 'Riley', email: 'riley@example.com', role: 'customer' };
-    }
-    try {
-      return JSON.parse(stored);
-    } catch (error) {
-      return { name: 'Riley', email: 'riley@example.com', role: 'customer' };
-    }
+  const [user, setUser] = useState({ name: 'Riley', email: 'riley@example.com', role: 'customer' });
+
+  useEffect(() => {
+    const readUser = () => {
+      const stored = localStorage.getItem('bn_user');
+      if (!stored) {
+        setUser({ name: 'Riley', email: 'riley@example.com', role: 'customer' });
+        return;
+      }
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        setUser({ name: 'Riley', email: 'riley@example.com', role: 'customer' });
+      }
+    };
+    readUser();
+    window.addEventListener('bn-user-updated', readUser);
+    return () => window.removeEventListener('bn-user-updated', readUser);
   }, []);
 
   useEffect(() => {
@@ -99,6 +64,16 @@ const CustomerDashboard = () => {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    const updateAvatar = () => {
+      const storedAvatar = localStorage.getItem('bn_avatar');
+      setAvatarUrl(storedAvatar || '');
+    };
+    updateAvatar();
+    window.addEventListener('bn-avatar-updated', updateAvatar);
+    return () => window.removeEventListener('bn-avatar-updated', updateAvatar);
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem('bn_user');
     navigate('/login');
@@ -110,34 +85,33 @@ const CustomerDashboard = () => {
     setShowAvatarDropdown(false);
   };
 
-  const toggleWishlist = (book) => {
-    setMyBooks((prev) => {
-      const isExist = prev.find((b) => b.id === book.id || b.key === book.id);
-      if (isExist) {
-        // If it's already in myBooks, just toggle status if it was wishlist, 
-        // or remove it if it was added from search
-        if (isExist.status === 'wishlist') {
-          return prev.filter((b) => b.id !== book.id && b.key !== book.id);
-        }
-        return prev;
-      }
+  const showToast = (message, tone = 'success') => {
+    setToast({ message, tone });
+    setTimeout(() => setToast(null), 2500);
+  };
 
-      // If it's a new book from search
-      return [
-        ...prev,
-        {
-          ...book,
-          id: book.id,
-          key: book.id,
-          status: 'wishlist',
-          progress: 0,
-        }
-      ];
+  const isInCart = (id) => cart.some((item) => item.id === id);
+  const isInWishlist = (id) => wishlist.some((item) => item.id === id);
+
+  const addToCart = (book) => {
+    setCart((prev) => {
+      if (prev.some((item) => item.id === book.id)) return prev;
+      return [...prev, { ...book, qty: 1 }];
+    });
+  };
+
+  const toggleWishlist = (book) => {
+    setWishlist((prev) => {
+      if (prev.some((item) => item.id === book.id)) {
+        return prev.filter((item) => item.id !== book.id);
+      }
+      return [...prev, book];
     });
   };
 
   const mobileTabs = [
     { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
+    { id: 'shop', label: 'Shop', icon: BookOpen },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
     { id: 'profile', label: 'Profile', icon: User }
   ];
@@ -153,30 +127,45 @@ const CustomerDashboard = () => {
         onToggleAvatar={() => setShowAvatarDropdown((prev) => !prev)}
         onSignOut={handleLogout}
         onNavigate={handleSectionChange}
+        onOpenSettings={() => handleSectionChange('settings')}
         onPreview={setPreviewBook}
       />
       <CustomerSidebar
         user={user}
+        avatarUrl={avatarUrl}
+        stats={{
+          booksCount: cart.length + wishlist.length,
+          wishlistCount: wishlist.length,
+          friendsCount: user?.friendsCount || 0
+        }}
         activeSection={activeSection}
         onSectionChange={handleSectionChange}
         onLogout={handleLogout}
       />
 
       <main className="pb-24 pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8">
-        {previewBook && (
-          <ReaderView book={previewBook} onClose={() => setPreviewBook(null)} />
-        )}
         {activeSection === 'dashboard' && (
           <DashboardView
-            onNavigate={handleSectionChange}
-            onPreview={setPreviewBook}
+            addToCart={addToCart}
+            toggleWishlist={toggleWishlist}
+            isInCart={isInCart}
+            isInWishlist={isInWishlist}
+            setActiveSection={handleSectionChange}
+            showToast={showToast}
+          />
+        )}
+        {activeSection === 'shop' && (
+          <BrowseBooksView
+            addToCart={addToCart}
+            toggleWishlist={toggleWishlist}
+            isInCart={isInCart}
+            isInWishlist={isInWishlist}
           />
         )}
         {activeSection === 'wishlist' && (
           <WishlistView
-            books={myBooks.filter((book) => book.status === 'wishlist')}
+            books={wishlist}
             onRemove={toggleWishlist}
-            onPreview={setPreviewBook}
           />
         )}
         {activeSection === 'community' && <CommunityView user={user} />}
@@ -204,6 +193,22 @@ const CustomerDashboard = () => {
           })}
         </div>
       </div>
+
+      {toast && (
+        <div className="fixed right-6 top-20 z-[70] rounded-xl border border-white/10 bg-white/10 px-4 py-2 text-sm text-white shadow-2xl backdrop-blur">
+          {toast.message}
+        </div>
+      )}
+
+      {previewBook && (
+        <PreviewModal
+          book={previewBook}
+          onClose={() => setPreviewBook(null)}
+          onAddToCart={addToCart}
+          isInCart={isInCart}
+          onToggleWishlist={toggleWishlist}
+        />
+      )}
     </div>
   );
 };
