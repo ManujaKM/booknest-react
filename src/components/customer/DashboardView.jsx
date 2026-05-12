@@ -1,46 +1,59 @@
 import { BookOpen, Heart, ShoppingCart, Sparkles, Tag } from 'lucide-react';
 import { useState } from 'react';
 
-const DashboardView = ({ onNavigate, onOpenReading, onOpenShare, onAddToWishlist }) => {
+const DashboardView = ({ onNavigate, onOpenReading, onOpenShare, onAddToWishlist, onPreview }) => {
   const [addedIds, setAddedIds] = useState([]);
   const [hoveredBar, setHoveredBar] = useState(null);
+  const [wishlisted, setWishlisted] = useState([]);
   const recommended = [
     {
       id: 1,
       title: 'Project Hail Mary',
       author: 'Andy Weir',
       cover: 'bg-emerald-500/40',
-      rating: '★★★★★'
+      rating: '★★★★★',
+      badge: 'Bestseller',
+      price: '$14.99'
     },
     {
       id: 2,
       title: 'Deep Work',
       author: 'Cal Newport',
       cover: 'bg-amber-500/40',
-      rating: '★★★★'
+      rating: '★★★★',
+      badge: 'Editor Pick',
+      price: '$12.99'
     },
     {
       id: 3,
       title: 'The Alchemist',
       author: 'Paulo Coelho',
       cover: 'bg-pink-500/40',
-      rating: '★★★★★'
+      rating: '★★★★★',
+      badge: 'Classic',
+      price: '$11.99'
     },
     {
       id: 4,
       title: 'Dune',
       author: 'Frank Herbert',
       cover: 'bg-blue-500/40',
-      rating: '★★★★'
+      rating: '★★★★',
+      badge: 'Sci-Fi',
+      price: '$15.99'
     },
     {
       id: 5,
       title: '1984',
       author: 'George Orwell',
       cover: 'bg-purple-500/40',
-      rating: '★★★★★'
+      rating: '★★★★★',
+      badge: 'Popular',
+      price: '$10.99'
     }
   ];
+
+  const FEATURED = recommended;
 
   const bars = [40, 65, 30, 80, 55, 90, 45];
   const pages = [12, 15, 7, 18, 11, 21, 9];
