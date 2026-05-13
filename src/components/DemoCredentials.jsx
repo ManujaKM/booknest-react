@@ -64,6 +64,12 @@ const DemoCredentials = () => {
               badge: 'bg-blue-100 text-blue-700',
               email: 'delivery@booknest.com',
               password: 'delivery123'
+            },
+            {
+              label: 'Shop Owner',
+              badge: 'bg-amber-200 text-amber-800',
+              email: 'shopowner@booknest.com',
+              password: 'shopowner123'
             }
           ].map((item) => (
             <div key={item.label} className="flex items-start justify-between gap-4 border-b border-white/10 last:border-none pb-3 last:pb-0">
