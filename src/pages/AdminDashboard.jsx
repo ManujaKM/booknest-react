@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Users,
   Book,
@@ -14,7 +14,7 @@ import {
   X,
   Store
 } from 'lucide-react';
-import ShopApplicationsPanel from '../components/admin/ShopApplicationsPanel.jsx';
+import Sidebar from '../components/admin/Sidebar.jsx';
 
 const MOCK_INVENTORY = [
   { id: 1, title: 'Atomic Habits', author: 'James Clear', stock: 45, price: 15.99, category: 'Self Help' },
@@ -30,11 +30,19 @@ const MOCK_USERS = [
 ];
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('inventory');
   const [inventory, setInventory] = useState(MOCK_INVENTORY);
   const [users, setUsers] = useState(MOCK_USERS);
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    if (location.pathname.includes('/admin/users')) {
+      setActiveTab('users');
+    } else {
+      setActiveTab('inventory');
+    }
+  }, [location.pathname]);
 
   const stats = [
     { label: 'Total Sales', value: '$12,450', icon: BarChart3, color: 'text-blue-400' },
@@ -51,73 +59,49 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0d0d1a] text-white font-['Inter']">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 hidden h-full w-64 border-r border-white/10 bg-[#131325] lg:block">
-        <div className="flex h-20 items-center gap-3 px-8 border-b border-white/10">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-600 shadow-lg shadow-purple-500/20">
-            <BarChart3 size={22} />
+    <div className="min-h-screen bg-[#0d0d1a] text-white">
+      <Sidebar />
+      <main className="admin-shell">
+        <div className="p-8 space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold">
+                {activeTab === 'users' ? 'User Management' : 'Inventory'}
+              </h1>
+              <p className="text-sm text-[#8a8fa8]">
+                {activeTab === 'users'
+                  ? 'Manage customers and staff'
+                  : 'Manage your book stock'}
+              </p>
+            </div>
+            <button className="rounded-lg bg-[#7c3aed] px-4 py-2 text-sm font-semibold text-white">
+              <Plus size={18} className="inline mr-2" />
+              {activeTab === 'users' ? 'Add New User' : 'Add New'}
+            </button>
           </div>
-          <span className="text-xl font-bold tracking-tight">BookNest <span className="text-xs text-purple-400 font-normal">Admin</span></span>
-        </div>
 
-        <nav className="mt-8 space-y-2 px-4">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
-                  isActive
-                    ? 'bg-purple-600/10 text-purple-400'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                <Icon size={20} />
-                {item.label}
-              </button>
-            );
-          })}
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <main className="lg:pl-64">
-        {/* Topbar */}
-        <header className="flex h-20 items-center justify-between border-b border-white/10 bg-[#0d0d1a]/80 px-8 backdrop-blur-md sticky top-0 z-20">
-          <div className="flex items-center gap-4 flex-1 max-w-md">
-            <div className="relative w-full">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <div className="rounded-2xl border border-[#2a2d42] bg-[#1a1d2e] p-4">
+            <div className="relative w-full max-w-md">
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8a8fa8]" />
               <input
                 type="text"
-                placeholder="Search database..."
-                className="w-full rounded-xl border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-sm outline-none focus:border-purple-500/50"
+                placeholder={activeTab === 'users' ? 'Search users...' : 'Search books...'}
+                className="w-full rounded-lg border border-[#2a2d42] bg-[#0f1322] py-2 pl-10 pr-4 text-sm text-[#e2e4f0] outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="rounded-xl bg-purple-600 px-4 py-2 text-sm font-bold shadow-lg shadow-purple-500/20 transition hover:bg-purple-500">
-              <Plus size={18} className="inline mr-2" />
-              Add New
-            </button>
-          </div>
-        </header>
-
-        <div className="p-8 space-y-8">
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((stat, i) => (
-              <div key={i} className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition hover:border-white/20">
+              <div key={i} className="rounded-2xl border border-[#2a2d42] bg-[#1a1d2e] p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400">{stat.label}</p>
+                    <p className="text-sm text-[#8a8fa8]">{stat.label}</p>
                     <p className="mt-1 text-2xl font-bold">{stat.value}</p>
                   </div>
-                  <div className={`rounded-2xl bg-white/5 p-3 ${stat.color}`}>
+                  <div className={`rounded-2xl bg-[#0f1322] p-3 ${stat.color}`}>
                     <stat.icon size={24} />
                   </div>
                 </div>
@@ -126,20 +110,15 @@ const AdminDashboard = () => {
           </div>
 
           {/* Content Area */}
-          {activeTab === 'shopApplications' ? (
-            <div className="rounded-3xl border border-white/10 bg-white/5 overflow-hidden backdrop-blur">
-              <div className="border-b border-white/10 bg-white/5 px-8 py-6 flex items-center justify-between gap-4 flex-wrap">
-                <div className="flex items-center gap-3">
-                  <Store size={20} className="text-purple-400" />
-                  <h2 className="text-xl font-bold">Shop Owner Applications</h2>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => navigate('/shopowner/apply')}
-                  className="inline-flex items-center gap-2 rounded-xl border border-purple-500/30 bg-purple-600/10 px-4 py-2 text-sm font-semibold text-purple-300 hover:bg-purple-600/20 transition"
-                >
-                  <Store size={15} />
-                  Apply as Shop Owner
+          <div className="rounded-2xl border border-[#2a2d42] bg-[#1a1d2e] overflow-hidden">
+            <div className="border-b border-[#2a2d42] bg-[#1a1d2e] px-8 py-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold capitalize">{activeTab}</h2>
+              <div className="flex gap-2">
+                <button className="rounded-lg border border-[#2a2d42] bg-[#12141f] p-2 text-[#8a8fa8] hover:text-white">
+                  <Edit size={18} />
+                </button>
+                <button className="rounded-lg border border-[#2a2d42] bg-[#12141f] p-2 text-[#f87171] hover:bg-red-500/10">
+                  <Trash2 size={18} />
                 </button>
               </div>
               <div className="p-8">
@@ -234,13 +213,12 @@ const AdminDashboard = () => {
                   </table>
                 )}
 
-                {activeTab === 'orders' && (
-                  <div className="p-20 text-center text-gray-500">
-                    <ShoppingCart size={48} className="mx-auto mb-4 opacity-20" />
-                    <p>Order history module is being synchronized...</p>
-                  </div>
-                )}
-              </div>
+              {activeTab === 'orders' && (
+                <div className="p-20 text-center text-gray-500">
+                  <ShoppingCart size={48} className="mx-auto mb-4 opacity-20" />
+                  <p>Orders are available on the Orders page.</p>
+                </div>
+              )}
             </div>
           )}
         </div>
