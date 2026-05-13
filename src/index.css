@@ -604,6 +604,36 @@ body.page-fade-in {
   padding: 20px;
 }
 
+.modal label {
+  display: block;
+  margin: 10px 0 6px;
+  font-size: 12px;
+  color: #8a8fa8;
+}
+
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #2a2d42;
+  background: #0f1322;
+  padding: 10px 12px;
+  color: #e2e4f0;
+  outline: none;
+}
+
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+}
+
+.modal textarea {
+  resize: vertical;
+}
+
 @media (max-width: 1024px) {
   .admin-shell {
     margin-left: 0;
