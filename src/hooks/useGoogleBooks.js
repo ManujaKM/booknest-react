@@ -16,6 +16,49 @@ export const useGoogleBooks = () => {
     startIndex = 0,
     orderBy = 'relevance'
   } = {}) => {
+    const fetchOpenLibrary = async (q) => {
+      const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=${maxResults}&offset=${startIndex}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`Open Library request failed (${res.status})`);
+      }
+      const data = await res.json();
+      const mapped = (data.docs || []).map((doc) => ({
+        id: doc.key,
+        title: doc.title || 'Unknown Title',
+        author: doc.author_name?.[0] || 'Unknown Author',
+        authors: doc.author_name || [],
+        description: '',
+        thumbnail: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg` : null,
+        smallThumbnail: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-S.jpg` : null,
+        rating: (3.5 + Math.random() * 1.5).toFixed(1),
+        ratingsCount: Math.floor(Math.random() * 5000 + 100),
+        pageCount: doc.number_of_pages_median || 0,
+        categories: doc.subject ? doc.subject.slice(0, 3) : [],
+        publisher: doc.publisher?.[0] || '',
+        publishedDate: doc.first_publish_year ? String(doc.first_publish_year) : '',
+        language: doc.language?.[0] || 'en',
+        previewLink: '',
+        infoLink: '',
+        price: (Math.random() * 20 + 6).toFixed(2),
+        originalPrice: (Math.random() * 10 + 18).toFixed(2),
+        condition: ['New', 'Like New', 'Good'][Math.floor(Math.random() * 3)],
+        badge: ['Bestseller', 'Editor Pick', 'Classic', 'Sci-Fi', 'Popular', 'New Arrival', 'Hot', 'Featured'][
+          Math.floor(Math.random() * 8)
+        ],
+        color: ['purple', 'blue', 'green', 'amber', 'pink', 'indigo', 'rose', 'teal', 'violet', 'cyan'][
+          Math.floor(Math.random() * 10)
+        ],
+        seller: ['Riley Store', 'BookHub LK', 'MindBooks', 'SciBooks', 'TechBooks'][
+          Math.floor(Math.random() * 5)
+        ],
+        stock: Math.floor(Math.random() * 20 + 1)
+      }));
+      setBooks(mapped);
+      setTotalItems(data.numFound || mapped.length);
+      return mapped;
+    };
+
     setLoading(true);
     setError(null);
     try {
@@ -48,7 +91,11 @@ export const useGoogleBooks = () => {
         data = await fetchData(false);
       }
 
-      const formatted = (data.items || []).map((item) => ({
+      if (!data.items || data.items.length === 0) {
+        return await fetchOpenLibrary(q);
+      }
+
+      const formatted = data.items.map((item) => ({
         id: item.id,
         title: item.volumeInfo?.title || 'Unknown Title',
         author: item.volumeInfo?.authors?.[0] || 'Unknown Author',
@@ -84,8 +131,12 @@ export const useGoogleBooks = () => {
       setTotalItems(data.totalItems || 0);
       return formatted;
     } catch (err) {
-      setError(err.message);
-      return [];
+      try {
+        return await fetchOpenLibrary(query);
+      } catch (fallbackError) {
+        setError(fallbackError.message || err.message);
+        return [];
+      }
     } finally {
       setLoading(false);
     }

@@ -3,10 +3,8 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
-  Chrome,
   Eye,
   EyeOff,
-  Facebook,
   Loader2,
   Lock,
   Mail,
@@ -278,35 +276,6 @@ const LoginForm = () => {
                 </>
               )}
             </button>
-
-            {selectedRole === 'customer' && (
-              <div className="flex items-center gap-3 text-xs text-slate-400">
-                <div className="h-px flex-1 bg-white/10" />
-                or
-                <div className="h-px flex-1 bg-white/10" />
-              </div>
-            )}
-
-            {selectedRole === 'customer' && (
-              <div className="grid sm:grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white hover:bg-white/10 shadow-sm transition-all duration-300"
-                >
-                  <span className="inline-flex items-center gap-2">
-                    <Chrome size={16} /> Continue with Google
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white hover:bg-white/10 shadow-sm transition-all duration-300"
-                >
-                  <span className="inline-flex items-center gap-2">
-                    <Facebook size={16} /> Continue with Facebook
-                  </span>
-                </button>
-              </div>
-            )}
 
             {selectedRole === 'customer' && (
               <p className="text-center text-sm text-slate-300">
