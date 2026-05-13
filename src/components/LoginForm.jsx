@@ -9,6 +9,7 @@ import {
   Lock,
   Mail,
   ShieldCheck,
+  Store,
   Truck
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -39,13 +40,22 @@ const roleMeta = {
     badge: 'Delivery',
     emailPlaceholder: 'you@example.com',
     passwordPlaceholder: 'Enter your password'
+  },
+  shopowner: {
+    title: 'Shop Owner Portal',
+    subtitle: 'Manage your bookshop on BookNest',
+    icon: Store,
+    badge: 'Shop Owner',
+    emailPlaceholder: 'you@example.com',
+    passwordPlaceholder: 'Enter your password'
   }
 };
 
 const credentials = {
   customer: { email: 'customer@booknest.com', password: 'customer123' },
   admin: { email: 'admin@booknest.com', password: 'admin123' },
-  delivery: { email: 'delivery@booknest.com', password: 'delivery123' }
+  delivery: { email: 'delivery@booknest.com', password: 'delivery123' },
+  shopowner: { email: 'shopowner@booknest.com', password: 'shopowner123' }
 };
 
 const LoginForm = () => {
@@ -66,7 +76,8 @@ const LoginForm = () => {
   const accentColor = {
     customer: 'amber',
     admin: 'rose',
-    delivery: 'blue'
+    delivery: 'blue',
+    shopowner: 'amber'
   }[selectedRole];
 
   const accentClasses = {
@@ -139,7 +150,8 @@ const LoginForm = () => {
       const redirectMap = {
         customer: '/customer/dashboard',
         admin: '/admin/dashboard',
-        delivery: '/delivery/dashboard'
+        delivery: '/delivery/dashboard',
+        shopowner: '/shopowner/dashboard'
       };
 
       localStorage.setItem(
@@ -147,7 +159,8 @@ const LoginForm = () => {
         JSON.stringify({
           email,
           role: selectedRole,
-          name: 'Riley'
+          name: selectedRole === 'shopowner' ? 'Shop Owner' : 'Riley',
+          shopName: selectedRole === 'shopowner' ? 'Demo Bookshop' : undefined
         })
       );
       navigate(redirectMap[selectedRole]);

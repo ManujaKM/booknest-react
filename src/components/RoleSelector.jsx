@@ -1,4 +1,4 @@
-import { BookOpen, ShieldCheck, Truck } from 'lucide-react';
+import { BookOpen, ShieldCheck, Store, Truck } from 'lucide-react';
 
 const roles = [
   {
@@ -15,15 +15,21 @@ const roles = [
   },
   {
     value: 'delivery',
-    label: 'Delivery Boy',
+    label: 'Delivery',
     icon: Truck,
     activeClass: 'bg-blue-500 text-white'
+  },
+  {
+    value: 'shopowner',
+    label: 'Shop Owner',
+    icon: Store,
+    activeClass: 'bg-amber-400 text-slate-900'
   }
 ];
 
 const RoleSelector = ({ selectedRole, onSelect }) => {
   return (
-    <div className="bg-white/10 rounded-full p-1 grid grid-cols-3 gap-1">
+    <div className="bg-white/10 rounded-xl p-1 grid grid-cols-4 gap-1">
       {roles.map((role) => {
         const Icon = role.icon;
         const isActive = selectedRole === role.value;
