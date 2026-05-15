@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import ShopOwnerMyBooks from '../components/shopowner/ShopOwnerMyBooks.jsx';
+import ShopOwnerOrders from '../components/shopowner/ShopOwnerOrders.jsx';
 import { useNavigate } from 'react-router-dom';
 import {
   Store,
@@ -251,25 +253,9 @@ const ShopOwnerDashboard = () => {
       case 'dashboard':
         return <DashboardOverview user={user} />;
       case 'mybooks':
-        return (
-          <>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-white">My Books</h1>
-              <p className="text-sm text-gray-400 mt-1">Manage your book listings</p>
-            </div>
-            <UnderConstruction section="Book Management" />
-          </>
-        );
+        return <ShopOwnerMyBooks user={user} />;
       case 'orders':
-        return (
-          <>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-white">Orders</h1>
-              <p className="text-sm text-gray-400 mt-1">Track and manage customer orders</p>
-            </div>
-            <UnderConstruction section="Order Management" />
-          </>
-        );
+        return <ShopOwnerOrders user={user} />;
       case 'delivery':
         return (
           <>

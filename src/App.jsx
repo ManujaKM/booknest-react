@@ -9,6 +9,9 @@ import AdminInventory from './pages/admin/Inventory.jsx';
 import DeliveryDashboard from './pages/DeliveryDashboard.jsx';
 import AdminProfile from './pages/admin/AdminProfile.jsx';
 import Orders from './pages/admin/Orders.jsx';
+import ShopOwnerApplyPage from './pages/ShopOwnerApplyPage.jsx';
+import ShopOwnerRegisterPage from './pages/ShopOwnerRegisterPage.jsx';
+import ShopOwnerDashboard from './pages/ShopOwnerDashboard.jsx';
 
 const App = () => {
   const location = useLocation();

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getOrders, updateOrder, STORE_EVENT } from '../../store/bookStore.js';
 import { MoreVertical } from 'lucide-react';
 import Sidebar from '../../components/admin/Sidebar.jsx';
 
@@ -59,20 +60,58 @@ const summary = [
 ];
 
 const statusColors = {
-  Pending: '#fbbf24',
+  pending:    '#fbbf24',
+  dispatched: '#60a5fa',
+  delivered:  '#34d399',
+  Pending:    '#fbbf24',
   Processing: '#60a5fa',
-  Delivered: '#34d399',
-  Cancelled: '#f87171'
+  Delivered:  '#34d399',
+  Cancelled:  '#f87171'
 };
 
 const Orders = () => {
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState([]);
   const [menuId, setMenuId] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [nextStatus, setNextStatus] = useState('Pending');
+  const [nextStatus, setNextStatus] = useState('pending');
+
+  const loadOrders = () => {
+    const live = getOrders();
+    // Normalise live orders to match the display shape
+    const mapped = live.map(o => ({
+      id:       o.id,
+      customer: o.customer?.name || 'Unknown',
+      book:     o.bookTitle      || '—',
+      qty:      o.qty            || 1,
+      amount:   o.amount         || 0,
+      status:   o.status         || 'pending',
+      date:     new Date(o.createdAt).toLocaleDateString(),
+      shopName: o.shopName,
+      address:  `${o.customer?.address || ''}, ${o.customer?.city || ''}`.trim(),
+      _isLive:  true,
+      _rawId:   o.id,
+    }));
+    // Merge: live orders first, then legacy mocks (no overlap by id)
+    setOrders(mapped);
+  };
+
+  useEffect(() => {
+    loadOrders();
+    window.addEventListener(STORE_EVENT, loadOrders);
+    return () => window.removeEventListener(STORE_EVENT, loadOrders);
+  }, []);
+
+  // Dynamic summary
+  const summary = [
+    { label: 'Total Orders', value: orders.length,                                          color: '#a78bfa' },
+    { label: 'Pending',      value: orders.filter(o => o.status === 'pending').length,       color: '#fbbf24' },
+    { label: 'Dispatched',   value: orders.filter(o => o.status === 'dispatched').length,    color: '#60a5fa' },
+    { label: 'Delivered',    value: orders.filter(o => o.status === 'delivered').length,     color: '#34d399' },
+    { label: 'Revenue',      value: '$' + orders.reduce((s,o) => s + (o.amount||0), 0).toFixed(2), color: '#34d399' },
+  ];
 
   const openMenu = (orderId) => {
     setMenuId((current) => (current === orderId ? null : orderId));
@@ -98,11 +137,11 @@ const Orders = () => {
   };
 
   const applyStatus = () => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === selectedOrder.id ? { ...order, status: nextStatus } : order
-      )
-    );
+    if (selectedOrder?._isLive) {
+      updateOrder(selectedOrder._rawId, { status: nextStatus });
+    } else {
+      setOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: nextStatus } : o));
+    }
     setShowStatusModal(false);
   };
 
@@ -217,11 +256,10 @@ const Orders = () => {
               value={nextStatus}
               onChange={(e) => setNextStatus(e.target.value)}
             >
-              {Object.keys(statusColors).map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
+              <option value="pending">Pending</option>
+              <option value="dispatched">Dispatched</option>
+              <option value="delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
             </select>
             <div className="mt-5 flex justify-end gap-2">
               <button

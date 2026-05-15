@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { getOrders, updateOrder, STORE_EVENT } from '../store/bookStore.js';
 import {
   Users,
   Book,
@@ -35,6 +36,15 @@ const AdminDashboard = () => {
   const [inventory, setInventory] = useState(MOCK_INVENTORY);
   const [users, setUsers] = useState(MOCK_USERS);
   const [searchTerm, setSearchTerm] = useState('');
+  const [orders, setOrders] = useState([]);
+
+  const loadOrders = () => setOrders(getOrders());
+
+  useEffect(() => {
+    loadOrders();
+    window.addEventListener(STORE_EVENT, loadOrders);
+    return () => window.removeEventListener(STORE_EVENT, loadOrders);
+  }, []);
 
   useEffect(() => {
     if (location.pathname.includes('/admin/users')) {
@@ -111,116 +121,163 @@ const AdminDashboard = () => {
 
           {/* Content Area */}
           <div className="rounded-2xl border border-[#2a2d42] bg-[#1a1d2e] overflow-hidden">
-            <div className="border-b border-[#2a2d42] bg-[#1a1d2e] px-8 py-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold capitalize">{activeTab}</h2>
+            {/* Panel Header */}
+            <div className="border-b border-[#2a2d42] px-8 py-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold capitalize">{activeTab.replace(/([A-Z])/g, ' $1')}</h2>
               <div className="flex gap-2">
-                <button className="rounded-lg border border-[#2a2d42] bg-[#12141f] p-2 text-[#8a8fa8] hover:text-white">
+                <button className="rounded-lg border border-[#2a2d42] bg-[#12141f] p-2 text-[#8a8fa8] hover:text-white transition">
                   <Edit size={18} />
                 </button>
-                <button className="rounded-lg border border-[#2a2d42] bg-[#12141f] p-2 text-[#f87171] hover:bg-red-500/10">
+                <button className="rounded-lg border border-[#2a2d42] bg-[#12141f] p-2 text-[#f87171] hover:bg-red-500/10 transition">
                   <Trash2 size={18} />
                 </button>
               </div>
-              <div className="p-8">
-                <ShopApplicationsPanel />
-              </div>
             </div>
-          ) : (
-            <div className="rounded-3xl border border-white/10 bg-white/5 overflow-hidden backdrop-blur">
-              <div className="border-b border-white/10 bg-white/5 px-8 py-6 flex items-center justify-between">
-                <h2 className="text-xl font-bold capitalize">{activeTab}</h2>
-                <div className="flex gap-2">
-                  <button className="rounded-lg bg-white/5 p-2 text-gray-400 hover:text-white">
-                    <Edit size={18} />
-                  </button>
-                  <button className="rounded-lg bg-white/5 p-2 text-red-400 hover:bg-red-500/10">
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </div>
 
+            {/* Inventory Tab */}
+            {activeTab === 'inventory' && (
               <div className="overflow-x-auto">
-                {activeTab === 'inventory' && (
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="border-b border-white/10 text-xs font-bold uppercase tracking-wider text-gray-500">
-                        <th className="px-8 py-4">Book Title</th>
-                        <th className="px-8 py-4">Stock</th>
-                        <th className="px-8 py-4">Price</th>
-                        <th className="px-8 py-4">Category</th>
-                        <th className="px-8 py-4 text-right">Actions</th>
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-[#2a2d42] text-xs font-bold uppercase tracking-wider text-[#8a8fa8]">
+                      <th className="px-8 py-4">Book Title</th>
+                      <th className="px-8 py-4">Stock</th>
+                      <th className="px-8 py-4">Price</th>
+                      <th className="px-8 py-4">Category</th>
+                      <th className="px-8 py-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#2a2d42]">
+                    {inventory.map((book) => (
+                      <tr key={book.id} className="text-sm transition hover:bg-[#25283d]">
+                        <td className="px-8 py-4">
+                          <div className="font-semibold">{book.title}</div>
+                          <div className="text-xs text-[#8a8fa8]">{book.author}</div>
+                        </td>
+                        <td className="px-8 py-4">
+                          <span className={`rounded-full px-2 py-1 text-[10px] font-bold border ${book.stock < 10 ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                            {book.stock} in stock
+                          </span>
+                        </td>
+                        <td className="px-8 py-4 font-medium text-emerald-400">${book.price.toFixed(2)}</td>
+                        <td className="px-8 py-4 text-[#8a8fa8]">{book.category}</td>
+                        <td className="px-8 py-4 text-right">
+                          <button className="text-[#8a8fa8] hover:text-white transition">
+                            <MoreVertical size={18} />
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {inventory.map((book) => (
-                        <tr key={book.id} className="text-sm transition hover:bg-white/[0.02]">
-                          <td className="px-8 py-4">
-                            <div className="font-semibold">{book.title}</div>
-                            <div className="text-xs text-gray-500">{book.author}</div>
-                          </td>
-                          <td className="px-8 py-4">
-                            <span className={`rounded-full px-2 py-1 text-[10px] font-bold ${book.stock < 10 ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}`}>
-                              {book.stock} in stock
-                            </span>
-                          </td>
-                          <td className="px-8 py-4 font-medium text-emerald-400">${book.price.toFixed(2)}</td>
-                          <td className="px-8 py-4 text-gray-400">{book.category}</td>
-                          <td className="px-8 py-4 text-right">
-                            <button className="text-gray-500 hover:text-white">
-                              <MoreVertical size={18} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
-                {activeTab === 'users' && (
+            {/* Users Tab */}
+            {activeTab === 'users' && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-[#2a2d42] text-xs font-bold uppercase tracking-wider text-[#8a8fa8]">
+                      <th className="px-8 py-4">User</th>
+                      <th className="px-8 py-4">Role</th>
+                      <th className="px-8 py-4">Status</th>
+                      <th className="px-8 py-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#2a2d42]">
+                    {users.map((user) => (
+                      <tr key={user.id} className="text-sm transition hover:bg-[#25283d]">
+                        <td className="px-8 py-4">
+                          <div className="font-semibold">{user.name}</div>
+                          <div className="text-xs text-[#8a8fa8]">{user.email}</div>
+                        </td>
+                        <td className="px-8 py-4">
+                          <span className="capitalize text-[#c0c4d8]">{user.role}</span>
+                        </td>
+                        <td className="px-8 py-4">
+                          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wider ${user.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                            {user.status === 'active' ? <Check size={10} /> : <X size={10} />}
+                            {user.status}
+                          </span>
+                        </td>
+                        <td className="px-8 py-4 text-right">
+                          <button className="text-[#8a8fa8] hover:text-white transition">
+                            <MoreVertical size={18} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Orders Tab */}
+            {activeTab === 'orders' && (
+              <div className="overflow-x-auto">
+                {orders.length === 0 ? (
+                  <div className="p-20 text-center text-[#8a8fa8]">
+                    <ShoppingCart size={48} className="mx-auto mb-4 opacity-20" />
+                    <p>No orders placed yet.</p>
+                  </div>
+                ) : (
                   <table className="w-full text-left">
                     <thead>
-                      <tr className="border-b border-white/10 text-xs font-bold uppercase tracking-wider text-gray-500">
-                        <th className="px-8 py-4">User</th>
-                        <th className="px-8 py-4">Role</th>
+                      <tr className="border-b border-[#2a2d42] text-xs font-bold uppercase tracking-wider text-[#8a8fa8]">
+                        <th className="px-8 py-4">Order</th>
+                        <th className="px-8 py-4">Customer</th>
+                        <th className="px-8 py-4">Shop</th>
+                        <th className="px-8 py-4">Amount</th>
                         <th className="px-8 py-4">Status</th>
-                        <th className="px-8 py-4 text-right">Actions</th>
+                        <th className="px-8 py-4">Date</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {users.map((user) => (
-                        <tr key={user.id} className="text-sm transition hover:bg-white/[0.02]">
+                    <tbody className="divide-y divide-[#2a2d42]">
+                      {orders.map(order => (
+                        <tr key={order.id} className="text-sm transition hover:bg-[#25283d]">
                           <td className="px-8 py-4">
-                            <div className="font-semibold">{user.name}</div>
-                            <div className="text-xs text-gray-500">{user.email}</div>
-                          </td>
-                          <td className="px-8 py-4">
-                            <span className="capitalize text-gray-300">{user.role}</span>
+                            <div className="font-bold text-purple-400">{order.id}</div>
+                            <div className="text-xs text-[#8a8fa8] truncate max-w-[140px]">{order.bookTitle}</div>
                           </td>
                           <td className="px-8 py-4">
-                            <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wider ${user.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-                              {user.status === 'active' ? <Check size={10} /> : <X size={10} />}
-                              {user.status}
-                            </span>
+                            <div className="font-semibold">{order.customer?.name}</div>
+                            <div className="text-xs text-[#8a8fa8]">{order.customer?.city}</div>
                           </td>
-                          <td className="px-8 py-4 text-right">
-                            <button className="text-gray-500 hover:text-white">
-                              <MoreVertical size={18} />
-                            </button>
+                          <td className="px-8 py-4 text-[#8a8fa8]">{order.shopName}</td>
+                          <td className="px-8 py-4 font-bold text-emerald-400">${parseFloat(order.amount).toFixed(2)}</td>
+                          <td className="px-8 py-4">
+                            <select
+                              value={order.status}
+                              onChange={e => updateOrder(order.id, { status: e.target.value })}
+                              className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-wider cursor-pointer outline-none bg-transparent ${
+                                order.status === 'pending'    ? 'border-amber-500/30 text-amber-400' :
+                                order.status === 'dispatched' ? 'border-blue-500/30 text-blue-400' :
+                                                               'border-emerald-500/30 text-emerald-400'
+                              }`}
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="dispatched">Dispatched</option>
+                              <option value="delivered">Delivered</option>
+                            </select>
                           </td>
+                          <td className="px-8 py-4 text-xs text-[#8a8fa8]">{new Date(order.createdAt).toLocaleDateString()}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 )}
+              </div>
+            )}
 
-              {activeTab === 'orders' && (
-                <div className="p-20 text-center text-gray-500">
-                  <ShoppingCart size={48} className="mx-auto mb-4 opacity-20" />
-                  <p>Orders are available on the Orders page.</p>
-                </div>
-              )}
-            </div>
-          )}
+            {/* Shop Applications Tab */}
+            {activeTab === 'shopApplications' && (
+              <div className="p-20 text-center text-[#8a8fa8]">
+                <Store size={48} className="mx-auto mb-4 opacity-20" />
+                <p>No shop applications yet.</p>
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>
