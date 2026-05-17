@@ -32,13 +32,13 @@ const UnderConstruction = ({ section }) => (
 
     <div className="space-y-3 max-w-md">
       <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold text-amber-300 uppercase tracking-wider">
-        🚧 Under Construction
+        🚧 Not Included in Demo
       </div>
       <h2 className="text-2xl font-bold text-white">
-        {section} is coming soon
+        {section} is intentionally out of scope
       </h2>
       <p className="text-gray-500 text-sm leading-relaxed">
-        This feature is actively being built and will be available shortly.
+        This section is not part of the current frontend preview. It remains a placeholder for future feature work such as delivery management, analytics, or settings configuration.
       </p>
     </div>
 

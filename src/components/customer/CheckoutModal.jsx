@@ -8,7 +8,11 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import { addOrder, getCurrentUser } from '../../store/bookStore.js';
 
 // ── Stripe init ───────────────────────────────────────────────────────────────
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || '');
+const STRIPE_KEY = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || '';
+if (!STRIPE_KEY) {
+  console.warn('[BookNest] REACT_APP_STRIPE_PUBLISHABLE_KEY is not set. Stripe payments will not work.');
+}
+const stripePromise = STRIPE_KEY ? loadStripe(STRIPE_KEY) : null;
 
 // ── Steps ─────────────────────────────────────────────────────────────────────
 const STEPS = ['Order Summary', 'Delivery', 'Payment', 'Receipt'];

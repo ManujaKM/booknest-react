@@ -30,38 +30,28 @@ const CustomerDashboard = () => {
 
   const [user, setUser] = useState({ name: 'Riley', email: 'riley@example.com', role: 'customer' });
 
+  // Combined auth + user reading effect
   useEffect(() => {
     const readUser = () => {
       const stored = localStorage.getItem('bn_user');
       if (!stored) {
-        setUser({ name: 'Riley', email: 'riley@example.com', role: 'customer' });
+        navigate('/login');
         return;
       }
       try {
-        setUser(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        if (parsed?.role && parsed.role !== 'customer') {
+          navigate(`/${parsed.role}/dashboard`);
+          return;
+        }
+        setUser(parsed);
       } catch {
-        setUser({ name: 'Riley', email: 'riley@example.com', role: 'customer' });
+        navigate('/login');
       }
     };
     readUser();
     window.addEventListener('bn-user-updated', readUser);
     return () => window.removeEventListener('bn-user-updated', readUser);
-  }, []);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('bn_user');
-    if (!stored) {
-      navigate('/login');
-      return;
-    }
-    try {
-      const parsed = JSON.parse(stored);
-      if (parsed?.role && parsed.role !== 'customer') {
-        navigate(`/${parsed.role}/dashboard`);
-      }
-    } catch (error) {
-      navigate('/login');
-    }
   }, [navigate]);
 
   useEffect(() => {
@@ -155,12 +145,7 @@ const CustomerDashboard = () => {
           />
         )}
         {activeSection === 'shop' && (
-          <BrowseBooksView
-            addToCart={addToCart}
-            toggleWishlist={toggleWishlist}
-            isInCart={isInCart}
-            isInWishlist={isInWishlist}
-          />
+          <BrowseBooksView />
         )}
         {activeSection === 'wishlist' && (
           <WishlistView

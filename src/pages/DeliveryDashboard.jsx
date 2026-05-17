@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getOrders, updateOrder, STORE_EVENT } from '../store/bookStore.js';
 import {
   Package,
@@ -181,9 +182,32 @@ const RouteMap = ({ delivery }) => {
 
 // ─── Main Dashboard ────────────────────────────────────────────────────────
 const DeliveryDashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab]   = useState('active');
   const [rawOrders, setRawOrders]   = useState([]);
   const [expandedMap, setExpandedMap] = useState(null);
+  const [user, setUser] = useState(null);
+
+  // Read delivery user from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('bn_user');
+    if (!stored) { navigate('/login'); return; }
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed?.role !== 'delivery') {
+        navigate(`/${parsed.role}/dashboard`);
+        return;
+      }
+      setUser(parsed);
+    } catch {
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('bn_user');
+    navigate('/login');
+  };
 
   // Load orders that have a shopAddress (i.e. came through checkout)
   const loadOrders = () => {
@@ -262,7 +286,10 @@ const DeliveryDashboard = () => {
         </nav>
 
         <div className="absolute bottom-8 w-full px-4">
-          <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-400 transition hover:bg-red-500/10">
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-400 transition hover:bg-red-500/10"
+          >
             <LogOut size={20} />
             Sign Out
           </button>
@@ -276,8 +303,8 @@ const DeliveryDashboard = () => {
           <h1 className="text-xl font-bold">Delivery Dashboard</h1>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold">David Miller</p>
-              <p className="text-xs text-purple-400">ID: DRV-9921</p>
+              <p className="text-sm font-semibold">{user?.name || 'Delivery Driver'}</p>
+              <p className="text-xs text-purple-400">ID: {user?.email?.split('@')[0]?.toUpperCase() || 'DRV'}</p>
             </div>
             <div className="h-10 w-10 rounded-full border-2 border-purple-500/30 bg-purple-600/20 flex items-center justify-center">
               <User size={20} className="text-purple-400" />

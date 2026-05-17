@@ -146,7 +146,7 @@ const ShopOwnerApplyPage = () => {
         </div>
         <button
           type="button"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/shopowner/register')}
           className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition"
         >
           <ChevronLeft size={16} />
