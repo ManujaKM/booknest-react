@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getOrders, updateOrder, STORE_EVENT } from '../../store/bookStore.js';
 import { MoreVertical } from 'lucide-react';
 import Sidebar from '../../components/admin/Sidebar.jsx';
+import Topbar from '../../components/admin/Topbar.jsx';
 
 const initialOrders = [
   {
@@ -152,8 +153,9 @@ const Orders = () => {
 
   return (
     <div className="min-h-screen bg-[#0d0d1a] text-white">
+      <Topbar />
       <Sidebar />
-      <main className="admin-shell">
+      <main className="pb-24 pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8">
         <div className="p-6">
           <h1 className="text-2xl font-semibold">Orders</h1>
           <div className="mt-4 flex flex-wrap gap-3">

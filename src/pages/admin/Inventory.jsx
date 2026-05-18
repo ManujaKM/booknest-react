@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import Sidebar from '../../components/admin/Sidebar.jsx';
+import Topbar from '../../components/admin/Topbar.jsx';
 
 const initialBooks = [
   {
@@ -237,8 +238,9 @@ const Inventory = () => {
 
   return (
     <div className="min-h-screen bg-[#0d0f1a] text-white">
+      <Topbar />
       <Sidebar />
-      <main className="admin-shell">
+      <main className="pb-24 pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8">
         <div className="p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

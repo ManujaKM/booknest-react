@@ -3,7 +3,7 @@ import { ShoppingBag, Clock, CheckCircle, Truck, Package } from 'lucide-react';
 import { getOrders, updateOrder, STORE_EVENT } from '../../store/bookStore.js';
 
 const STATUS_STYLES = {
-  pending:    'border-amber-500/30 bg-amber-500/10 text-amber-400',
+  pending:    'border-purple-500/30 bg-purple-500/10 text-purple-300',
   dispatched: 'border-blue-500/30 bg-blue-500/10 text-blue-400',
   delivered:  'border-emerald-500/30 bg-emerald-500/10 text-emerald-400',
 };
@@ -55,7 +55,7 @@ const ShopOwnerOrders = ({ user }) => {
             onClick={() => setFilter(s)}
             className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold capitalize transition ${
               filter === s
-                ? 'bg-amber-500/20 border border-amber-500/30 text-amber-300'
+                ? 'bg-purple-500/20 border border-purple-500/30 text-purple-300'
                 : 'border border-white/10 bg-white/5 text-gray-400 hover:text-white'
             }`}
           >
@@ -67,8 +67,8 @@ const ShopOwnerOrders = ({ user }) => {
       {/* Empty state */}
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 py-20 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20">
-            <ShoppingBag size={32} className="text-amber-400" />
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-500/10 border border-purple-500/20">
+            <ShoppingBag size={32} className="text-purple-300" />
           </div>
           <h3 className="text-lg font-bold text-white">No orders yet</h3>
           <p className="mt-1 text-sm text-gray-500">Orders will appear here once customers purchase your books</p>
@@ -78,15 +78,15 @@ const ShopOwnerOrders = ({ user }) => {
       {/* Orders list */}
       <div className="space-y-4">
         {filtered.map(order => (
-          <div key={order.id} className="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-amber-500/20">
+          <div key={order.id} className="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-purple-500/20">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex gap-3">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20">
-                  <Package size={22} className="text-amber-400" />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 border border-purple-500/20">
+                  <Package size={22} className="text-purple-300" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">{order.id}</span>
+                    <span className="text-xs font-bold text-purple-300 uppercase tracking-wider">{order.id}</span>
                     <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_STYLES[order.status] || STATUS_STYLES.pending}`}>
                       {order.status}
                     </span>
@@ -104,7 +104,7 @@ const ShopOwnerOrders = ({ user }) => {
                 {order.status !== 'delivered' && (
                   <button
                     onClick={() => advance(order.id, order.status)}
-                    className="mt-1 flex items-center gap-1.5 rounded-xl bg-amber-500/20 border border-amber-500/30 px-3 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/30 transition"
+                    className="mt-1 flex items-center gap-1.5 rounded-xl bg-purple-500/20 border border-purple-500/30 px-3 py-1.5 text-xs font-bold text-purple-300 hover:bg-purple-500/30 transition"
                   >
                     {order.status === 'pending' ? <Truck size={13} /> : <CheckCircle size={13} />}
                     {STATUS_LABEL[order.status]}

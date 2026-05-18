@@ -16,6 +16,7 @@ import {
   Store
 } from 'lucide-react';
 import Sidebar from '../components/admin/Sidebar.jsx';
+import Topbar from '../components/admin/Topbar.jsx';
 
 const MOCK_INVENTORY = [
   { id: 1, title: 'Atomic Habits', author: 'James Clear', stock: 45, price: 15.99, category: 'Self Help' },
@@ -70,8 +71,9 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#0d0d1a] text-white">
+      <Topbar />
       <Sidebar />
-      <main className="admin-shell">
+      <main className="pb-24 pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8">
         <div className="p-8 space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

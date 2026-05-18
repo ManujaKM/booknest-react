@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Search, X, ShoppingCart, BookOpen, Store, SlidersHorizontal } from 'lucide-react';
-import { getBooks, STORE_EVENT } from '../../store/bookStore.js';
+import { getBooks, seedBooks, STORE_EVENT } from '../../store/bookStore.js';
 import CheckoutModal from './CheckoutModal.jsx';
 
 const CATEGORIES = ['All', 'Fiction', 'Non-Fiction', 'Self-Help', 'Business', 'Science', 'Tech', 'History', 'Psychology', 'Fantasy', 'Mystery', 'Biography', 'Children', 'Other'];
@@ -49,7 +49,7 @@ const BookCard = ({ book, onBuy }) => (
   </div>
 );
 
-const EmptyState = ({ search, category, onClear }) => (
+const EmptyState = ({ search, category, onClear, onSeed }) => (
   <div className="flex flex-col items-center justify-center py-24 text-center col-span-full">
     <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-purple-500/10 border border-purple-500/20">
       <BookOpen size={36} className="text-purple-400/50" />
@@ -62,11 +62,18 @@ const EmptyState = ({ search, category, onClear }) => (
         ? `No books listed under "${category}" yet`
         : 'No books have been listed by shop owners yet. Check back soon!'}
     </p>
-    {(search || category !== 'All') && (
-      <button onClick={onClear} className="rounded-xl bg-purple-600 px-5 py-2 text-sm font-semibold text-white hover:bg-purple-500 transition">
-        Clear Filters
-      </button>
-    )}
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      {(search || category !== 'All') && (
+        <button onClick={onClear} className="rounded-xl bg-purple-600 px-5 py-2 text-sm font-semibold text-white hover:bg-purple-500 transition">
+          Clear Filters
+        </button>
+      )}
+      {(!search && category === 'All') && onSeed && (
+        <button onClick={onSeed} className="rounded-xl border border-white/10 bg-white/5 px-5 py-2 text-sm font-semibold text-white hover:bg-white/10 transition">
+          Add sample books
+        </button>
+      )}
+    </div>
   </div>
 );
 
@@ -154,7 +161,14 @@ const BrowseBooksView = () => {
       {/* Grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
         {filtered.length === 0
-          ? <EmptyState search={search} category={category} onClear={() => { setSearch(''); setCategory('All'); }} />
+          ? (
+            <EmptyState
+              search={search}
+              category={category}
+              onClear={() => { setSearch(''); setCategory('All'); }}
+              onSeed={allBooks.length === 0 ? () => { seedBooks(); load(); } : null}
+            />
+          )
           : filtered.map(book => <BookCard key={book.id} book={book} onBuy={setCheckoutBook} />)
         }
       </div>

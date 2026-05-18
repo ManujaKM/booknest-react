@@ -12,7 +12,7 @@ const Field = ({ label, icon: Icon, children }) => (
   </div>
 );
 
-const inputCls = "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition";
+const inputCls = "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition";
 
 const AddBookModal = ({ onClose, onSave, initial = null }) => {
   const [form, setForm] = useState(initial ? {
@@ -30,6 +30,7 @@ const AddBookModal = ({ onClose, onSave, initial = null }) => {
     price: '', stock: '', coverUrl: '', description: '', shopAddress: ''
   });
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
   const [dragOver, setDragOver] = useState(false);
   const [coverMode, setCoverMode] = useState('upload'); // 'upload' | 'url'
   const fileRef = useRef(null);
@@ -67,13 +68,18 @@ const AddBookModal = ({ onClose, onSave, initial = null }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setSubmitError('');
     if (!validate()) return;
-    onSave({
-      ...form,
-      price: parseFloat(form.price),
-      stock: parseInt(form.stock, 10),
-    });
-    onClose();
+    try {
+      onSave({
+        ...form,
+        price: parseFloat(form.price),
+        stock: parseInt(form.stock, 10),
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unable to save book.';
+      setSubmitError(message);
+    }
   };
 
   return (
@@ -82,8 +88,8 @@ const AddBookModal = ({ onClose, onSave, initial = null }) => {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 border border-amber-500/30">
-              <BookOpen size={20} className="text-amber-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-500/30">
+              <BookOpen size={20} className="text-purple-300" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">{initial ? 'Edit Book' : 'Add New Book'}</h2>
@@ -132,10 +138,10 @@ const AddBookModal = ({ onClose, onSave, initial = null }) => {
               </label>
               {/* Mode toggle */}
               <div className="flex rounded-lg border border-white/10 bg-white/5 p-0.5 text-[10px] font-semibold">
-                <button type="button" onClick={() => setCoverMode('upload')} className={`rounded-md px-2.5 py-1 transition ${coverMode === 'upload' ? 'bg-amber-500/20 text-amber-300' : 'text-gray-500 hover:text-white'}`}>
+                <button type="button" onClick={() => setCoverMode('upload')} className={`rounded-md px-2.5 py-1 transition ${coverMode === 'upload' ? 'bg-purple-500/20 text-purple-300' : 'text-gray-500 hover:text-white'}`}>
                   <Upload size={10} className="inline mr-1" />Upload
                 </button>
-                <button type="button" onClick={() => setCoverMode('url')} className={`rounded-md px-2.5 py-1 transition ${coverMode === 'url' ? 'bg-amber-500/20 text-amber-300' : 'text-gray-500 hover:text-white'}`}>
+                <button type="button" onClick={() => setCoverMode('url')} className={`rounded-md px-2.5 py-1 transition ${coverMode === 'url' ? 'bg-purple-500/20 text-purple-300' : 'text-gray-500 hover:text-white'}`}>
                   <Link2 size={10} className="inline mr-1" />URL
                 </button>
               </div>
@@ -157,8 +163,8 @@ const AddBookModal = ({ onClose, onSave, initial = null }) => {
                 onClick={() => !form.coverUrl && fileRef.current?.click()}
                 className={`relative flex min-h-[120px] cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed transition ${
                   dragOver
-                    ? 'border-amber-500/70 bg-amber-500/10'
-                    : 'border-white/20 bg-white/[0.03] hover:border-amber-500/40 hover:bg-amber-500/5'
+                    ? 'border-purple-500/70 bg-purple-500/10'
+                    : 'border-white/20 bg-white/[0.03] hover:border-purple-500/40 hover:bg-purple-500/5'
                 }`}
               >
                 {form.coverUrl ? (
@@ -183,11 +189,11 @@ const AddBookModal = ({ onClose, onSave, initial = null }) => {
                   /* Empty state */
                   <>
                     <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition ${dragOver ? 'scale-110' : ''}`}>
-                      <Upload size={22} className="text-amber-400" />
+                      <Upload size={22} className="text-purple-300" />
                     </div>
                     <div className="text-center">
                       <p className="text-sm font-medium text-white">Drop image here</p>
-                      <p className="text-xs text-gray-500">or <span className="text-amber-400 underline">click to browse</span> · JPG, PNG, WebP</p>
+                      <p className="text-xs text-gray-500">or <span className="text-purple-300 underline">click to browse</span> · JPG, PNG, WebP</p>
                     </div>
                   </>
                 )}
@@ -204,11 +210,17 @@ const AddBookModal = ({ onClose, onSave, initial = null }) => {
             <textarea className={inputCls + ' resize-none h-24'} placeholder="Brief summary of the book…" value={form.description} onChange={e => set('description', e.target.value)} />
           </Field>
 
+          {submitError && (
+            <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-xs text-red-300">
+              {submitError}
+            </div>
+          )}
+
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/10 transition">
               Cancel
             </button>
-            <button type="submit" className="flex-1 rounded-xl bg-amber-500 py-2.5 text-sm font-bold text-black hover:bg-amber-400 transition shadow-lg shadow-amber-500/20">
+            <button type="submit" className="flex-1 rounded-xl bg-purple-600 py-2.5 text-sm font-bold text-white hover:bg-purple-500 transition shadow-lg shadow-purple-500/20">
               {initial ? 'Update Book' : 'List Book'}
             </button>
           </div>

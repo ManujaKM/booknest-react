@@ -116,6 +116,7 @@ const CustomerDashboard = () => {
         onToggleNotifications={() => setShowNotifDropdown((prev) => !prev)}
         onToggleAvatar={() => setShowAvatarDropdown((prev) => !prev)}
         onSignOut={handleLogout}
+        showSearch={true}
         onNavigate={handleSectionChange}
         onOpenSettings={() => handleSectionChange('settings')}
         onPreview={setPreviewBook}

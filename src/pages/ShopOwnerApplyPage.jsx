@@ -114,7 +114,7 @@ const ShopOwnerApplyPage = () => {
             Your shop application for <span className="font-semibold text-white">"{form.shopName}"</span> has been received.
             Our admin team will review it and send you an access code once approved.
           </p>
-          <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+          <div className="rounded-xl border border-purple-500/20 bg-purple-500/10 px-4 py-3 text-sm text-purple-300">
             ⏳ Review typically takes 1–2 business days.
           </div>
           <button

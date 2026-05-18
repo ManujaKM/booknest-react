@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getOrders, updateOrder, STORE_EVENT } from '../store/bookStore.js';
+import CustomerTopbar from '../components/customer/CustomerTopbar.jsx';
 import {
   Package,
   MapPin,
@@ -187,6 +188,9 @@ const DeliveryDashboard = () => {
   const [rawOrders, setRawOrders]   = useState([]);
   const [expandedMap, setExpandedMap] = useState(null);
   const [user, setUser] = useState(null);
+  const [notifications] = useState(3);
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const [showAvatarDropdown, setShowAvatarDropdown] = useState(false);
 
   // Read delivery user from localStorage
   useEffect(() => {
@@ -259,59 +263,59 @@ const DeliveryDashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#0d0d1a] text-white font-['Inter']">
+      <CustomerTopbar
+        user={user}
+        notifications={notifications}
+        showNotifDropdown={showNotifDropdown}
+        showAvatarDropdown={showAvatarDropdown}
+        onToggleNotifications={() => setShowNotifDropdown((prev) => !prev)}
+        onToggleAvatar={() => setShowAvatarDropdown((prev) => !prev)}
+        onSignOut={handleLogout}
+        showSearch={false}
+        onNavigate={() => {}}
+        onOpenSettings={() => {}}
+      />
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 hidden h-full w-64 border-r border-white/10 bg-[#131325] lg:block">
-        <div className="flex h-20 items-center gap-3 px-8 border-b border-white/10">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-600 shadow-lg shadow-purple-500/20">
-            <Package size={22} />
+      <aside className="fixed left-0 top-0 hidden h-full w-64 flex-col border-r border-white/10 bg-black/20 pt-20 pb-6 px-4 backdrop-blur lg:flex">
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-2xl font-semibold text-white">
+            {(user?.name || 'D')[0].toUpperCase()}
           </div>
-          <span className="text-xl font-bold tracking-tight">
-            BookNest <span className="text-xs text-purple-400 font-normal">Delivery</span>
+          <h3 className="mt-3 text-lg font-semibold text-white">{user?.name || 'Delivery Driver'}</h3>
+          <p className="text-xs text-gray-400">{user?.email || 'driver@booknest.com'}</p>
+          <span className="mt-3 inline-flex items-center rounded-full border border-purple-500/30 bg-purple-600/20 px-3 py-1 text-xs text-purple-300">
+            Delivery
           </span>
         </div>
 
-        <nav className="mt-8 space-y-2 px-4">
-          <button className="flex w-full items-center gap-3 rounded-xl bg-purple-600/10 px-4 py-3 text-sm font-medium text-purple-400">
-            <LayoutDashboard size={20} />
+        <nav className="mt-6 flex flex-1 flex-col gap-2">
+          <button className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition border border-purple-500/30 bg-purple-600/20 text-purple-300">
+            <LayoutDashboard size={18} />
             Dashboard
           </button>
-          <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 transition hover:bg-white/5 hover:text-white">
-            <Clock size={20} />
+          <button className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition text-gray-400 hover:bg-white/5 hover:text-white">
+            <Clock size={18} />
             History
           </button>
-          <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 transition hover:bg-white/5 hover:text-white">
-            <User size={20} />
+          <button className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition text-gray-400 hover:bg-white/5 hover:text-white">
+            <User size={18} />
             Profile
           </button>
         </nav>
 
-        <div className="absolute bottom-8 w-full px-4">
+        <div className="mt-6 space-y-2 text-sm">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-400 transition hover:bg-red-500/10"
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-400 transition hover:bg-white/5 hover:text-red-300"
           >
-            <LogOut size={20} />
+            <LogOut size={18} />
             Sign Out
           </button>
         </div>
       </aside>
 
       {/* Main */}
-      <main className="lg:pl-64">
-        {/* Topbar */}
-        <header className="flex h-20 items-center justify-between border-b border-white/10 bg-[#0d0d1a]/80 px-8 backdrop-blur-md sticky top-0 z-20">
-          <h1 className="text-xl font-bold">Delivery Dashboard</h1>
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold">{user?.name || 'Delivery Driver'}</p>
-              <p className="text-xs text-purple-400">ID: {user?.email?.split('@')[0]?.toUpperCase() || 'DRV'}</p>
-            </div>
-            <div className="h-10 w-10 rounded-full border-2 border-purple-500/30 bg-purple-600/20 flex items-center justify-center">
-              <User size={20} className="text-purple-400" />
-            </div>
-          </div>
-        </header>
-
+      <main className="pb-24 pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8">
         <div className="p-8 space-y-8">
           {/* Stats */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">

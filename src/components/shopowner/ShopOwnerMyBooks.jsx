@@ -43,7 +43,7 @@ const ShopOwnerMyBooks = ({ user }) => {
         </div>
         <button
           onClick={() => { setEditBook(null); setShowModal(true); }}
-          className="flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-bold text-black hover:bg-amber-400 transition shadow-lg shadow-amber-500/20"
+          className="flex items-center gap-2 rounded-xl bg-purple-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-purple-500 transition shadow-lg shadow-purple-500/20"
         >
           <Plus size={18} /> Add Book
         </button>
@@ -63,8 +63,8 @@ const ShopOwnerMyBooks = ({ user }) => {
       {/* Empty state */}
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 py-20 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20">
-            <BookOpen size={32} className="text-amber-400" />
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-500/10 border border-purple-500/20">
+            <BookOpen size={32} className="text-purple-300" />
           </div>
           <h3 className="text-lg font-bold text-white">
             {search ? 'No books match your search' : 'No books listed yet'}
@@ -96,7 +96,7 @@ const ShopOwnerMyBooks = ({ user }) => {
                       <div className="flex items-center gap-3">
                         {book.coverUrl
                           ? <img src={book.coverUrl} alt={book.title} className="h-12 w-8 rounded-md object-cover border border-white/10 shrink-0" onError={e => e.target.style.display='none'} />
-                          : <div className="flex h-12 w-8 shrink-0 items-center justify-center rounded-md bg-amber-500/10 border border-amber-500/20"><BookOpen size={14} className="text-amber-400" /></div>
+                          : <div className="flex h-12 w-8 shrink-0 items-center justify-center rounded-md bg-purple-500/10 border border-purple-500/20"><BookOpen size={14} className="text-purple-300" /></div>
                         }
                         <div className="min-w-0">
                           <p className="font-semibold text-white truncate">{book.title}</p>
@@ -109,7 +109,7 @@ const ShopOwnerMyBooks = ({ user }) => {
                         {book.category}
                       </span>
                     </td>
-                    <td className="px-5 py-4 font-bold text-amber-400">${parseFloat(book.price).toFixed(2)}</td>
+                    <td className="px-5 py-4 font-bold text-emerald-400">${parseFloat(book.price).toFixed(2)}</td>
                     <td className="px-5 py-4">
                       <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold ${book.stock < 5 ? 'border-red-500/20 bg-red-500/10 text-red-400' : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'}`}>
                         {book.stock} left

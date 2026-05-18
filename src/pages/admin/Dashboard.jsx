@@ -13,6 +13,7 @@ import {
 import { BarChart3, BookOpen, ShoppingCart, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/admin/Sidebar.jsx';
+import Topbar from '../../components/admin/Topbar.jsx';
 
 const revenueData = [
   { month: 'Dec', value: 2100 },
@@ -144,8 +145,9 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#0d0f1a] text-white">
+      <Topbar />
       <Sidebar />
-      <main className="admin-shell">
+      <main className="pb-24 pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8">
         <div className="p-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
             {stats.map((item) => {

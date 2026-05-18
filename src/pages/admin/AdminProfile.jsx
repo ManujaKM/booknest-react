@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import Sidebar from '../../components/admin/Sidebar.jsx';
+import Topbar from '../../components/admin/Topbar.jsx';
 
 const AdminProfile = () => {
   const { admin, logout, updateAdmin } = useAuth();
@@ -54,8 +55,9 @@ const AdminProfile = () => {
 
   return (
     <div className="min-h-screen bg-[#0d0d1a] text-white">
+      <Topbar />
       <Sidebar />
-      <main className="admin-shell">
+      <main className="pb-24 pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8">
         <div className="profile-page">
           <div className="profile-grid">
             <div className="card profile-info-card">

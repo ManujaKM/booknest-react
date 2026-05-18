@@ -124,6 +124,7 @@ const CustomerTopbar = ({
   onOpenSettings,
   onMarkNotificationsRead,
   onPreview,
+  showSearch = true,
 }) => {
   const initial = user?.name?.charAt(0)?.toUpperCase() || 'R';
   const [notificationItems, setNotificationItems] = useState(baseNotifications);
@@ -182,33 +183,35 @@ const CustomerTopbar = ({
         </div>
 
         {/* ── Search with live dropdown ── */}
-        <div ref={searchRef} className="relative hidden w-full max-w-md md:block">
-          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-gray-300 transition focus-within:border-purple-500/50">
-            <Search size={18} className="flex-shrink-0 text-gray-400" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); setShowSearchDrop(true); }}
-              onFocus={() => setShowSearchDrop(true)}
-              placeholder="Search books, authors…"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
-            />
-            {searchQuery && (
-              <button type="button" onClick={() => { setSearchQuery(''); setShowSearchDrop(false); }} className="text-gray-400 hover:text-white">
-                <X size={16} />
-              </button>
+        {showSearch && (
+          <div ref={searchRef} className="relative hidden w-full max-w-md md:block">
+            <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-gray-300 transition focus-within:border-purple-500/50">
+              <Search size={18} className="flex-shrink-0 text-gray-400" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setShowSearchDrop(true); }}
+                onFocus={() => setShowSearchDrop(true)}
+                placeholder="Search books, authors…"
+                className="w-full bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
+              />
+              {searchQuery && (
+                <button type="button" onClick={() => { setSearchQuery(''); setShowSearchDrop(false); }} className="text-gray-400 hover:text-white">
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            {showSearchDrop && (
+              <SearchDropdown
+                query={searchQuery}
+                onClose={() => setShowSearchDrop(false)}
+                onPreview={onPreview}
+              />
             )}
           </div>
-
-          {showSearchDrop && (
-            <SearchDropdown
-              query={searchQuery}
-              onClose={() => setShowSearchDrop(false)}
-              onPreview={onPreview}
-            />
-          )}
-        </div>
+        )}
 
         {/* Right actions */}
         <div className="relative flex flex-shrink-0 items-center gap-3" ref={notifRef}>
