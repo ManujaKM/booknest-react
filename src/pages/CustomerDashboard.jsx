@@ -146,7 +146,12 @@ const CustomerDashboard = () => {
           />
         )}
         {activeSection === 'shop' && (
-          <BrowseBooksView />
+          <BrowseBooksView
+            onAddToCart={addToCart}
+            onToggleWishlist={toggleWishlist}
+            isInCart={isInCart}
+            isInWishlist={isInWishlist}
+          />
         )}
         {activeSection === 'wishlist' && (
           <WishlistView

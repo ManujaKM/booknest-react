@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Search, X, ShoppingCart, BookOpen, Store, SlidersHorizontal } from 'lucide-react';
+import { Search, X, ShoppingCart, BookOpen, Store, SlidersHorizontal, Heart } from 'lucide-react';
 import { getBooks, seedBooks, STORE_EVENT } from '../../store/bookStore.js';
 import CheckoutModal from './CheckoutModal.jsx';
 
 const CATEGORIES = ['All', 'Fiction', 'Non-Fiction', 'Self-Help', 'Business', 'Science', 'Tech', 'History', 'Psychology', 'Fantasy', 'Mystery', 'Biography', 'Children', 'Other'];
 
-const BookCard = ({ book, onBuy }) => (
+const BookCard = ({ book, onBuy, onAddToCart, onToggleWishlist, isInCart, isInWishlist }) => (
   <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur transition hover:border-purple-500/40 hover:bg-white/[0.07]">
     {/* Cover */}
     <div className="relative aspect-[2/3] w-full overflow-hidden bg-gradient-to-br from-purple-900/40 to-[#0d0d1a]">
@@ -34,16 +34,39 @@ const BookCard = ({ book, onBuy }) => (
         {book.category}
       </span>
 
-      <div className="mt-auto pt-3 flex items-center justify-between gap-2">
-        <span className="text-base font-bold text-emerald-400">${parseFloat(book.price).toFixed(2)}</span>
-        <button
-          onClick={() => onBuy(book)}
-          disabled={book.stock === 0}
-          className="flex items-center gap-1.5 rounded-xl bg-purple-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-purple-500 transition shadow-md shadow-purple-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          <ShoppingCart size={12} />
-          {book.stock === 0 ? 'Out of Stock' : 'Buy Now'}
-        </button>
+      <div className="mt-auto pt-3 flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <span className="text-base font-bold text-emerald-400">${parseFloat(book.price).toFixed(2)}</span>
+          <button
+            onClick={() => onToggleWishlist(book)}
+            className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+              isInWishlist
+                ? 'border-purple-500/30 bg-purple-600/20 text-purple-300'
+                : 'border-white/10 bg-white/5 text-gray-300 hover:bg-white/10'
+            }`}
+          >
+            <Heart size={12} />
+            {isInWishlist ? 'Wishlisted' : 'Wishlist'}
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onAddToCart(book)}
+            disabled={book.stock === 0 || isInCart}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white hover:bg-white/10 transition disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <ShoppingCart size={12} />
+            {isInCart ? 'In Cart' : 'Add to Cart'}
+          </button>
+          <button
+            onClick={() => onBuy(book)}
+            disabled={book.stock === 0}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-purple-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-purple-500 transition shadow-md shadow-purple-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <ShoppingCart size={12} />
+            {book.stock === 0 ? 'Out of Stock' : 'Buy Now'}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -77,7 +100,7 @@ const EmptyState = ({ search, category, onClear, onSeed }) => (
   </div>
 );
 
-const BrowseBooksView = () => {
+const BrowseBooksView = ({ onAddToCart, onToggleWishlist, isInCart, isInWishlist }) => {
   const [allBooks, setAllBooks]           = useState([]);
   const [search, setSearch]               = useState('');
   const [category, setCategory]           = useState('All');
@@ -169,7 +192,17 @@ const BrowseBooksView = () => {
               onSeed={allBooks.length === 0 ? () => { seedBooks(); load(); } : null}
             />
           )
-          : filtered.map(book => <BookCard key={book.id} book={book} onBuy={setCheckoutBook} />)
+          : filtered.map(book => (
+            <BookCard
+              key={book.id}
+              book={book}
+              onBuy={setCheckoutBook}
+              onAddToCart={onAddToCart}
+              onToggleWishlist={onToggleWishlist}
+              isInCart={isInCart?.(book.id)}
+              isInWishlist={isInWishlist?.(book.id)}
+            />
+          ))
         }
       </div>
 
